@@ -2,6 +2,7 @@ import styles from "../../styles/draw.module.css";
 import dynamic from "next/dynamic";
 import React, { useEffect, useRef, useState } from "react";
 import { Kanji } from "../models/kanji.schema";
+import { useRouter } from "next/router";
 
 const KeyboardEventHandler = dynamic(
   () => import("react-keyboard-event-handler"),
@@ -15,6 +16,7 @@ const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
 });
 
 export default function Draw(props: { kanji: Kanji }) {
+  const router = useRouter();
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
@@ -22,6 +24,25 @@ export default function Draw(props: { kanji: Kanji }) {
   const strokeCount = Math.floor(
     props.kanji.svg.width / props.kanji.svg.individualWidth
   );
+
+  useEffect(() => {
+    const source = new EventSource("/stream");
+
+    source.onmessage = function (e) {
+      const kanji = (e as any).data;
+      console.log({ kanji, name: props.kanji.name });
+      // TODO: validate it's a valid kanji
+      //
+      // Only refresh when the kanji actually changes
+      if (kanji !== props.kanji.name) {
+        console.log("navigating");
+        router.push(`/draw/${kanji}`, null, {
+          shallow: false,
+        });
+        router.reload();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     const setCanvasSizeFn = () =>

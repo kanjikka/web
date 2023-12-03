@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "dev2": "node server.js",
     "dev": "next dev",
     "test": "jest",
     "build": "next build && next export",
@@ -11,6 +12,7 @@
   },
   "dependencies": {
     "@arch-inc/fabricjs-psbrush": "0.0.17",
+    "cors": "^2.8.5",
     "fabric": "^4.5.0",
     "immer": "^9.0.2",
     "next": "10.2.3",
