@@ -23,7 +23,7 @@
     "react-sketch-canvas": "^5.3.3",
     "react-svg": "^13.0.6",
     "sqlite": "^4.0.23",
-    "sqlite3": "^5.0.2"
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",
