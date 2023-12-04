@@ -20,6 +20,9 @@ export default function Draw(props: { kanji: Kanji }) {
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [assist, setAssist] = useState(true);
+
+  console.log(assist);
 
   const strokeCount = Math.floor(
     props.kanji.svg.width / props.kanji.svg.individualWidth
@@ -96,6 +99,9 @@ export default function Draw(props: { kanji: Kanji }) {
     );
   }
 
+  // TODO: make this optoinal
+  guidedTemplate.length = 0;
+
   // if it's a radical itself, don't show
   //  const madeOf =
   //    props.kanji.parts.length === 1 ? (
@@ -104,6 +110,14 @@ export default function Draw(props: { kanji: Kanji }) {
   //      <h4>made of {props.kanji.parts.map((a) => a)}</h4>
   //    );
   //
+  const canvasBackground = [];
+  if (assist) {
+    canvasBackground.push(
+      `repeat url(/kanji-template/${props.kanji.name}.svg)`
+    );
+  }
+  canvasBackground.push("repeat url(/template.svg)");
+
   return (
     <div className={styles.container}>
       <KeyboardEventHandler
@@ -164,8 +178,15 @@ export default function Draw(props: { kanji: Kanji }) {
           <button onClick={() => canvasRef?.current?.undo()}>undo</button>
           <button onClick={() => canvasRef?.current?.redo()}>redo</button>
           <button onClick={() => canvasRef?.current?.clear()}>clear</button>
+          <button onClick={() => setAssist((prevAssist) => !prevAssist)}>
+            Toggle assist
+          </button>
         </div>
-        <div ref={canvasWrapRef} className={styles.canvasContainer}>
+        <div
+          ref={canvasWrapRef}
+          className={styles.canvasContainer}
+          style={{ background: canvasBackground.join(",") }}
+        >
           <div id="guided-template" className={styles.spriteContainer}>
             {guidedTemplate.map((item) => item)}
           </div>

@@ -4,6 +4,11 @@ import { KanjiSchema } from "../../src/models/kanji.schema";
 export { default } from "../../src/draw/[id]";
 import * as datastore from "../../hacks/db";
 
+function isLowerCaseLatin(str) {
+  // Check if the string is entirely in lowercase Latin characters
+  return /^[a-z]+$/.test(str);
+}
+
 export async function getStaticPaths() {
   // https://github.com/vercel/next.js/issues/10943
   const pagesDirectory = path.resolve(process.cwd(), "pages");
@@ -12,7 +17,14 @@ export async function getStaticPaths() {
     path.join(pagesDirectory, "../", "hacks", "sqlite.db")
   );
 
-  const names = await datastore.findAllNames(db);
+  // Skip '.' since otherwise it will be normalized to empty string
+  // Which generates a route conflict
+  // Error: Requested and resolved page mismatch: /draw/. /draw
+  // Also since mac filesystem doesn't distinguish between lowercase and uppercase, remove lowercase ones
+  const names = (await datastore.findAllNames(db))
+    .filter((a) => a != ":" && a != ".")
+    .filter((a) => !isLowerCaseLatin(a));
+
   const paths = names.map((a) => ({ params: { id: a } }));
 
   return {
