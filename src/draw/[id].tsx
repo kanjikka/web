@@ -77,7 +77,7 @@ export default function Draw(props: { kanji: Kanji }) {
   if (canvasSize.width) {
     //    const word = `友達付き合い `;
     //    const word = `ともだち `;
-    const word = `ともだちがいぼ`;
+    const word = `ともだちがいぼびぼ`;
     // Assuming it's square, and that each kanji has same width which is wrong
     const tileArea =
       props.kanji.svg.individualWidth * props.kanji.svg.individualWidth;
@@ -86,8 +86,8 @@ export default function Draw(props: { kanji: Kanji }) {
     const columns = getColumns(window.innerWidth);
     console.log("gonna use", columns, "columns");
 
-    //let tilesNum = canvasArea / tileArea;
-    const tilesNum = 14;
+    let tilesNum = canvasArea / tileArea;
+    //const tilesNum = 14;
 
     let wordPointer = 0;
 
@@ -103,8 +103,22 @@ export default function Draw(props: { kanji: Kanji }) {
 
       // If finished word and there's more columns
       // TODO: how do we distinguish we just finished a word or not?
-      if (wordPointer === 0 && i > 0) {
+      //if (wordPointer === 0 && i > 0) {
+      if (wordPointer === word.length - 1) {
         console.log("we finished a word at", { i, index, wordPointer: c });
+
+        // Write the last character then pad it
+        tiles.push(
+          <div
+            style={{
+              width: props.kanji.svg.individualWidth,
+              height: props.kanji.svg.individualWidth,
+              background: `url(/kanji-template/${c}.svg)`,
+            }}
+          ></div>
+        );
+        i++;
+        wordPointer = (wordPointer + 1) % word.length;
 
         // Add one space
         // If we start over, will it fit in the same row?
