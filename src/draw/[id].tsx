@@ -4,6 +4,35 @@ import React, { useEffect, useRef, useState } from "react";
 import { Kanji } from "../models/kanji.schema";
 import { useRouter } from "next/router";
 
+// TODO: sync this with css
+// responsive
+const columns = {
+  9999: 15,
+  1526: 12,
+  1417: 11,
+  1308: 10,
+  1199: 9,
+  1090: 8,
+  981: 7,
+  872: 6,
+  763: 5,
+  654: 4,
+  545: 3,
+};
+
+function getColumns(screenWidth: number) {
+  // Sort by number
+  const entries = Object.entries(columns).sort((a, b) => {
+    return parseInt(a[0], 10) - parseInt(b[0], 10);
+  });
+
+  const found = entries.find((s) => {
+    return screenWidth < parseInt(s[0], 10);
+  });
+
+  return found[1];
+}
+
 const KeyboardEventHandler = dynamic(
   () => import("react-keyboard-event-handler"),
   {
@@ -20,13 +49,113 @@ export default function Draw(props: { kanji: Kanji }) {
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
-  const [assist, setAssist] = useState(true);
+  const [assist, setAssist] = useState(false);
 
-  console.log(assist);
-
+  //  const [dimensions, setDimensions] = React.useState({
+  //    height: 0,
+  //    width: 0,
+  //  });
   const strokeCount = Math.floor(
     props.kanji.svg.width / props.kanji.svg.individualWidth
   );
+
+  //  React.useEffect(() => {
+  //    function handleResize() {
+  //      setDimensions({
+  //        height: window.innerHeight,
+  //        width: window.innerWidth,
+  //      });
+  //    }
+  //
+  //    window.addEventListener("resize", handleResize);
+  //  }, []);
+
+  let tiles = [];
+
+  // TODO: we know how many columns we have (it's in the css)
+  // so we can pad in the end
+  if (canvasSize.width) {
+    //    const word = `友達付き合い `;
+    //    const word = `ともだち `;
+    const word = `ともだちがいぼ`;
+    // Assuming it's square, and that each kanji has same width which is wrong
+    const tileArea =
+      props.kanji.svg.individualWidth * props.kanji.svg.individualWidth;
+    const canvasArea = canvasSize.width * canvasSize.height;
+
+    const columns = getColumns(window.innerWidth);
+    console.log("gonna use", columns, "columns");
+
+    //let tilesNum = canvasArea / tileArea;
+    const tilesNum = 14;
+
+    let wordPointer = 0;
+
+    for (
+      let i = 0;
+      tiles.length < tilesNum; //      i++, wordPointer = wordPointer % columns
+
+    ) {
+      console.log("currently pointing to", word[wordPointer]);
+      const index = (i % columns) % word.length;
+      const c = word[wordPointer];
+      // TODO: is this a valid way to index
+
+      // If finished word and there's more columns
+      // TODO: how do we distinguish we just finished a word or not?
+      if (wordPointer === 0 && i > 0) {
+        console.log("we finished a word at", { i, index, wordPointer: c });
+
+        // Add one space
+        // If we start over, will it fit in the same row?
+        console.log(
+          "i % columns",
+          i % columns,
+          "wordlength",
+          word.length,
+          "columns",
+          columns
+        );
+
+        if ((i % columns) + word.length > columns) {
+          // It's not gonna fit, so let's pad until row is finished
+          const spacesRequired = columns - (i % columns);
+          console.log("padding with", spacesRequired, "spaces");
+
+          //console.log("going to the loop", i, columns);
+          for (let j = 0; j < spacesRequired; j++) {
+            console.log("padding", j);
+            tiles.push(
+              <div
+                key={i}
+                style={{
+                  width: props.kanji.svg.individualWidth,
+                  height: props.kanji.svg.individualWidth,
+                  background: `url(/kanji-template/ .svg)`,
+                }}
+              ></div>
+            );
+            i++;
+          }
+          continue;
+          //console.log("columns - i", columns - i);
+          //          tilesNum = tilesNum - (columns - i);
+        }
+      }
+
+      tiles.push(
+        <div
+          style={{
+            width: props.kanji.svg.individualWidth,
+            height: props.kanji.svg.individualWidth,
+            background: `url(/kanji-template/${c}.svg)`,
+          }}
+        ></div>
+      );
+      i++;
+      wordPointer = (wordPointer + 1) % word.length;
+    }
+  }
 
   useEffect(() => {
     const source = new EventSource("/stream");
@@ -48,11 +177,14 @@ export default function Draw(props: { kanji: Kanji }) {
   }, []);
 
   useEffect(() => {
-    const setCanvasSizeFn = () =>
-      setCanvasSize({
-        width: canvasWrapRef.current.offsetWidth,
-        height: canvasWrapRef.current.offsetHeight,
-      });
+    const setCanvasSizeFn = () => {
+      if (canvasWrapRef && canvasWrapRef.current) {
+        setCanvasSize({
+          width: canvasWrapRef.current.offsetWidth,
+          height: canvasWrapRef.current.offsetHeight,
+        });
+      }
+    };
 
     // record listener
     window.addEventListener("resize", () => {
@@ -60,7 +192,7 @@ export default function Draw(props: { kanji: Kanji }) {
     });
     // run for the first time
     setCanvasSizeFn();
-  }, []);
+  }, [canvasWrapRef.current]);
 
   const kanjiSprite = [];
   const guidedTemplate = [];
@@ -189,6 +321,9 @@ export default function Draw(props: { kanji: Kanji }) {
         >
           <div id="guided-template" className={styles.spriteContainer}>
             {guidedTemplate.map((item) => item)}
+          </div>
+          <div id="tiles" className={styles.tiles}>
+            {tiles.map((item) => item)}
           </div>
 
           <PracticeCanvas
