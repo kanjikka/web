@@ -9,11 +9,6 @@
   margin: 3rem 0 ;
 }
 
-.spriteContainer {
-  display: flex;
-  flex-wrap: wrap;
-}
-
 .canvasContainer {
   --main-columns: 7;
   position: relative;
@@ -34,6 +29,17 @@
 
 .title {
   text-align: center;
+}
+
+.tiles {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.sprite {}
+.sprite > * {
+  display: inline-block;
 }
 
 /* TODO: maybe use sass somehow? */
