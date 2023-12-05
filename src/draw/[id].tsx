@@ -47,6 +47,160 @@ const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
 });
 
+export default function Draw(props: { kanjis: Kanji[] }) {
+  const router = useRouter();
+  const canvasRef = useRef(null);
+  const canvasWrapRef = useRef(null);
+  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const [assist, setAssist] = useState(true);
+  const word = props.kanjis.map((a) => a.name).join("");
+
+  async function syncOtherDevices() {
+    // Tell the server this page has been loaded
+    fetch(`/change-route?kanji=${word}`);
+  }
+
+  useEffect(() => {
+    const source = new EventSource("/stream");
+
+    source.onmessage = function (e) {
+      const kanji = (e as any).data;
+
+      // Only refresh when the content actually changes
+      if (kanji !== word) {
+        router.push(`/draw/${kanji}`, null, {
+          shallow: false,
+        });
+      }
+    };
+
+    return () => {
+      source.close();
+    };
+  }, [word]);
+
+  useEffect(() => {
+    const setCanvasSizeFn = () => {
+      if (canvasWrapRef && canvasWrapRef.current) {
+        setCanvasSize({
+          width: canvasWrapRef.current.offsetWidth,
+          height: canvasWrapRef.current.offsetHeight,
+        });
+      }
+    };
+
+    // record listener
+    window.addEventListener("resize", () => {
+      setCanvasSizeFn();
+    });
+    // run for the first time
+    setCanvasSizeFn();
+  }, [canvasWrapRef.current]);
+
+  const guidedTemplate = [];
+
+  // This is faster, but it's an optimization
+  const canvasBackground = [];
+  //  if (assist && props.kanjis.length === 1) {
+  //    canvasBackground.push(
+  //      `repeat url(/kanji-template/${props.kanjis[0].name}.svg)`
+  //    );
+  //  }
+  canvasBackground.push("repeat url(/template.svg)");
+
+  return (
+    <div className={styles.container}>
+      {/* More strict logic to go back to the main page if there's nothing in history */}
+      <button onClick={() => router.back()}>Go Back</button>
+      <Link href="/">Go to home page</Link>
+
+      <KeyboardEventHandler
+        handleKeys={["ctrl+z", "ctrl+r", "ctrl+l"]}
+        onKeyEvent={(key: string, e: KeyboardEvent) => {
+          e.preventDefault();
+          switch (key) {
+            case "ctrl+z": {
+              canvasRef.current.undo();
+              break;
+            }
+            case "ctrl+r": {
+              canvasRef.current.redo();
+              break;
+            }
+            case "ctrl+l": {
+              canvasRef.current.clear();
+              break;
+            }
+
+            default: {
+              throw new Error("key not implemented" + key);
+            }
+          }
+        }}
+      />
+      <div className={styles.title}>
+        <Title characters={props.kanjis} />
+      </div>
+      <div className={styles.reference}>
+        <h4>Reference:</h4>
+        <div>
+          <Tutorial characters={props.kanjis} />
+        </div>
+      </div>
+      <div>
+        <h4>Practice:</h4>
+
+        <div>
+          <button onClick={() => canvasRef?.current?.undo()}>undo</button>
+          <button onClick={() => canvasRef?.current?.redo()}>redo</button>
+          <button onClick={() => canvasRef?.current?.clear()}>clear</button>
+          <button onClick={() => setAssist((prevAssist) => !prevAssist)}>
+            Toggle assist
+          </button>
+          <button onClick={() => syncOtherDevices()}>
+            Send to other devices
+          </button>
+        </div>
+        <div
+          ref={canvasWrapRef}
+          className={styles.canvasContainer}
+          style={{ background: canvasBackground.join(",") }}
+        >
+          <div id="guided-template" className={styles.spriteContainer}>
+            {guidedTemplate.map((item) => item)}
+          </div>
+          <div id="tiles" className={styles.tiles}>
+            {typeof window !== "undefined" && assist && (
+              <Tiles
+                word={word}
+                canvasSize={canvasSize}
+                windowWidth={window.innerWidth}
+              />
+            )}
+          </div>
+
+          <PracticeCanvas
+            forwardRef={canvasRef}
+            width={canvasSize.width}
+            height={canvasSize.height}
+            className={styles.canvas}
+          ></PracticeCanvas>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Title(props: { characters: Kanji[] }) {
+  return (
+    <h1>
+      {props.characters.map((c) => {
+        return <Link href={`/draw/${c.name}`}>{c.name}</Link>;
+      })}
+    </h1>
+  );
+}
+
 // that explanation component
 function Tutorial(props: { characters: Kanji[] }) {
   // Unique
@@ -203,155 +357,4 @@ function Tiles(props: {
   }
 
   return <>{tiles}</>;
-}
-
-export default function Draw(props: { kanjis: Kanji[] }) {
-  const router = useRouter();
-  const canvasRef = useRef(null);
-  const canvasWrapRef = useRef(null);
-  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
-  const [assist, setAssist] = useState(true);
-  const word = props.kanjis.map((a) => a.name).join("");
-
-  async function syncOtherDevices() {
-    // Tell the server this page has been loaded
-    fetch(`/change-route?kanji=${word}`);
-  }
-
-  useEffect(() => {
-    const source = new EventSource("/stream");
-
-    source.onmessage = function (e) {
-      const kanji = (e as any).data;
-
-      // Only refresh when the content actually changes
-      if (kanji !== word) {
-        router.push(`/draw/${kanji}`, null, {
-          shallow: false,
-        });
-      }
-    };
-
-    return () => {
-      source.close();
-    };
-  }, [word]);
-
-  useEffect(() => {
-    const setCanvasSizeFn = () => {
-      if (canvasWrapRef && canvasWrapRef.current) {
-        setCanvasSize({
-          width: canvasWrapRef.current.offsetWidth,
-          height: canvasWrapRef.current.offsetHeight,
-        });
-      }
-    };
-
-    // record listener
-    window.addEventListener("resize", () => {
-      setCanvasSizeFn();
-    });
-    // run for the first time
-    setCanvasSizeFn();
-  }, [canvasWrapRef.current]);
-
-  const guidedTemplate = [];
-
-  // This is faster, but it's an optimization
-  const canvasBackground = [];
-  //  if (assist && props.kanjis.length === 1) {
-  //    canvasBackground.push(
-  //      `repeat url(/kanji-template/${props.kanjis[0].name}.svg)`
-  //    );
-  //  }
-  canvasBackground.push("repeat url(/template.svg)");
-
-  return (
-    <div className={styles.container}>
-      <KeyboardEventHandler
-        handleKeys={["ctrl+z", "ctrl+r", "ctrl+l"]}
-        onKeyEvent={(key: string, e: KeyboardEvent) => {
-          e.preventDefault();
-          switch (key) {
-            case "ctrl+z": {
-              canvasRef.current.undo();
-              break;
-            }
-            case "ctrl+r": {
-              canvasRef.current.redo();
-              break;
-            }
-            case "ctrl+l": {
-              canvasRef.current.clear();
-              break;
-            }
-
-            default: {
-              throw new Error("key not implemented" + key);
-            }
-          }
-        }}
-      />
-      <div className={styles.title}>
-        <Title characters={props.kanjis} />
-      </div>
-      <div className={styles.reference}>
-        <h4>Reference:</h4>
-        <div>
-          <Tutorial characters={props.kanjis} />
-        </div>
-      </div>
-      <div>
-        <h4>Practice:</h4>
-
-        <div>
-          toolbar
-          <button onClick={() => canvasRef?.current?.undo()}>undo</button>
-          <button onClick={() => canvasRef?.current?.redo()}>redo</button>
-          <button onClick={() => canvasRef?.current?.clear()}>clear</button>
-          <button onClick={() => setAssist((prevAssist) => !prevAssist)}>
-            Toggle assist
-          </button>
-          <button onClick={() => syncOtherDevices()}>
-            Send to other devices
-          </button>
-        </div>
-        <div
-          ref={canvasWrapRef}
-          className={styles.canvasContainer}
-          style={{ background: canvasBackground.join(",") }}
-        >
-          <div id="guided-template" className={styles.spriteContainer}>
-            {guidedTemplate.map((item) => item)}
-          </div>
-          <div id="tiles" className={styles.tiles}>
-            {typeof window !== "undefined" && assist && (
-              <Tiles
-                word={word}
-                canvasSize={canvasSize}
-                windowWidth={window.innerWidth}
-              />
-            )}
-          </div>
-
-          <PracticeCanvas
-            forwardRef={canvasRef}
-            width={canvasSize.width}
-            height={canvasSize.height}
-            className={styles.canvas}
-          ></PracticeCanvas>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function Title(props: { characters: Kanji[] }) {
-  return (
-    <h1>
-      {props.characters.map((c) => {
-        return <Link href={`/draw/${c.name}`}>{c.name}</Link>;
-      })}
-    </h1>
-  );
 }

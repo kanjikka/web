@@ -7,11 +7,11 @@ export default function All(props: { index: string[] }) {
     <div className={styles.container}>
       <Head>
         <title>Kanji Drawing Practice</title>
-        <meta name="description" content="Kanji Drawing Practice appn" />
+        <meta name="description" content="Kanji Drawing Practice app" />
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>All Kanji</h1>
+        <h1 className={styles.title}>All Characters</h1>
 
         <ul>
           {props.index.map((i) => (

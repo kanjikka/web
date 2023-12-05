@@ -3,6 +3,8 @@
   --main-columns: 7;
   max-width: calc(109px * var(--main-columns));
   margin: 0 auto;
+
+  padding-bottom: 80px;
 }
 
 .reference {

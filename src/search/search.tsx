@@ -151,10 +151,7 @@ export default function Search(props: SearchProps) {
         // https://github.com/testing-library/react-testing-library/issues/763#issuecomment-672148556
         const query = e.target.elements.query.value.trim();
 
-        const decision = decide(query, props.available);
-        if (decision.valid) {
-          redirect(router, decision);
-        }
+        router.push(`/draw/${query}`);
       }}
     >
       <input
