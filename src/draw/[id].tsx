@@ -89,6 +89,11 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   //  }
   canvasBackground.push("repeat url(/template.svg)");
 
+  // Clear canvas when word changes
+  useEffect(() => {
+    canvasRef.current?.clear();
+  }, [word, canvasRef.current]);
+
   return (
     <div className={styles.container}>
       {/* More strict logic to go back to the main page if there's nothing in history */}
@@ -161,6 +166,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           </div>
 
           <PracticeCanvas
+            currentWord={word}
             forwardRef={canvasRef}
             width={canvasSize.width}
             height={canvasSize.height}
