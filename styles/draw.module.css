@@ -9,17 +9,14 @@
   margin: 3rem 0 ;
 }
 
-.spriteContainer {
-  display: flex;
-  flex-wrap: wrap;
-}
-
 .canvasContainer {
   --main-columns: 7;
   position: relative;
   background: repeat url(/template.svg);
   width: calc(109px * var(--main-columns));
   height: calc(109px * var(--main-columns));
+
+  overflow: hidden;
 }
 
 .canvas {
@@ -34,6 +31,17 @@
 
 .title {
   text-align: center;
+}
+
+.tiles {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.sprite {}
+.sprite > * {
+  display: inline-block;
 }
 
 /* TODO: maybe use sass somehow? */

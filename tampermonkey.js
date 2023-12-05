@@ -22,27 +22,22 @@
 (function () {
   "use strict";
   window.wkItemInfo.notify((e) => {
-    // yes kanji lowercase
-    if (e.type === "kanji" || e.type === "radical") {
-      console.log("changed kanji", e.characters);
-      fetch(
-        "http://localhost:3000/change-route?" +
-          new URLSearchParams({
-            kanji: e.characters,
-          })
-      );
-    }
+    console.log("changed kanji", e.characters);
+    fetch(
+      "http://localhost:3000/change-route?" +
+        new URLSearchParams({
+          kanji: e.characters,
+        })
+    );
   });
 
   window.addEventListener("willShowNextQuestion", (e) => {
-    if (e.detail.subject.type == "Kanji") {
-      console.log("changed kanji", e.detail.subject.characters);
-      fetch(
-        "http://localhost:3000/change-route?" +
-          new URLSearchParams({
-            kanji: e.detail.subject.characters,
-          })
-      );
-    }
+    console.log("changed kanji", e.detail.subject.characters);
+    fetch(
+      "http://localhost:3000/change-route?" +
+        new URLSearchParams({
+          kanji: e.detail.subject.characters,
+        })
+    );
   });
 })();
