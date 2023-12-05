@@ -61,25 +61,6 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   }
 
   useEffect(() => {
-    const source = new EventSource("/stream");
-
-    source.onmessage = function (e) {
-      const kanji = (e as any).data;
-
-      // Only refresh when the content actually changes
-      if (kanji !== word) {
-        router.push(`/draw/${kanji}`, null, {
-          shallow: false,
-        });
-      }
-    };
-
-    return () => {
-      source.close();
-    };
-  }, [word]);
-
-  useEffect(() => {
     const setCanvasSizeFn = () => {
       if (canvasWrapRef && canvasWrapRef.current) {
         setCanvasSize({
