@@ -9,46 +9,69 @@ function isLowerCaseLatin(str) {
   return /^[a-z]+$/.test(str);
 }
 
-export async function getStaticPaths() {
+//export async function getStaticPaths() {
+//  // https://github.com/vercel/next.js/issues/10943
+//  const pagesDirectory = path.resolve(process.cwd(), "pages");
+//
+//  const db = await datastore.open(
+//    path.join(pagesDirectory, "../", "hacks", "sqlite.db")
+//  );
+//
+//  // Skip '.' since otherwise it will be normalized to empty string
+//  // Which generates a route conflict
+//  // Error: Requested and resolved page mismatch: /draw/. /draw
+//  // Also since mac filesystem doesn't distinguish between lowercase and uppercase, remove lowercase ones
+//  const names = (await datastore.findAllNames(db))
+//    .filter((a) => a != ":" && a != ".")
+//    .filter((a) => !isLowerCaseLatin(a));
+//
+//  const paths = names.map((a) => ({ params: { id: a } }));
+//
+//  return {
+//    paths,
+//    fallback: false,
+//  };
+//}
+//
+//// TODO type
+//export async function getStaticProps(context: any) {
+//  // https://github.com/vercel/next.js/issues/10943
+//  const pagesDirectory = path.resolve(process.cwd(), "pages");
+//  const db = await datastore.open(
+//    path.join(pagesDirectory, "../", "hacks", "sqlite.db")
+//  );
+//
+//  const res = await datastore.getCharacter(db, context.params.id);
+//
+//  //const jsonParsed = JSON.parse(file);
+//  const kanji = KanjiSchema.parse(res);
+//
+//  return {
+//    props: {
+//      kanji,
+//    },
+//  };
+//}
+export async function getServerSideProps(context: any) {
   // https://github.com/vercel/next.js/issues/10943
   const pagesDirectory = path.resolve(process.cwd(), "pages");
-
   const db = await datastore.open(
     path.join(pagesDirectory, "../", "hacks", "sqlite.db")
   );
 
-  // Skip '.' since otherwise it will be normalized to empty string
-  // Which generates a route conflict
-  // Error: Requested and resolved page mismatch: /draw/. /draw
-  // Also since mac filesystem doesn't distinguish between lowercase and uppercase, remove lowercase ones
-  const names = (await datastore.findAllNames(db))
-    .filter((a) => a != ":" && a != ".")
-    .filter((a) => !isLowerCaseLatin(a));
+  // Break into individual characters
+  const chars = context.params.id.split("");
 
-  const paths = names.map((a) => ({ params: { id: a } }));
+  const requests = chars.map(async (a) => {
+    const res = await datastore.getCharacter(db, a);
+    return KanjiSchema.parse(res);
+  });
 
-  return {
-    paths,
-    fallback: false,
-  };
-}
-
-// TODO type
-export async function getStaticProps(context: any) {
-  // https://github.com/vercel/next.js/issues/10943
-  const pagesDirectory = path.resolve(process.cwd(), "pages");
-  const db = await datastore.open(
-    path.join(pagesDirectory, "../", "hacks", "sqlite.db")
-  );
-
-  const res = await datastore.getCharacter(db, context.params.id);
-
-  //const jsonParsed = JSON.parse(file);
-  const kanji = KanjiSchema.parse(res);
+  const kanjis = await Promise.all(requests);
 
   return {
     props: {
-      kanji,
+      kanjis,
     },
   };
 }

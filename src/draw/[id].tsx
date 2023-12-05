@@ -46,7 +46,21 @@ const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
 });
 
-function Sprite(props: { kanji: Kanji }) {
+// that explanation component
+function Tutorial(props: { kanjis: Kanji[] }) {
+  // Unique
+  const kanjisUnique = [...new Set(props.kanjis)];
+
+  return (
+    <>
+      {kanjisUnique.map((k) => (
+        <TutorialTile key={k.name} kanji={k} />
+      ))}
+    </>
+  );
+}
+
+function TutorialTile(props: { kanji: Kanji }) {
   const strokeCount = Math.floor(
     props.kanji.svg.width / props.kanji.svg.individualWidth
   );
@@ -54,7 +68,6 @@ function Sprite(props: { kanji: Kanji }) {
   return (
     <div className={styles.sprite}>
       {Array.from(Array(strokeCount).keys()).map((i) => {
-        console.log({ i });
         return (
           <div
             key={i}
@@ -79,45 +92,57 @@ function Tiles(props: {
   canvasSize: { width: number; height: number };
   windowWidth: number;
 }) {
-  const { word, canvasSize, windowWidth } = props;
+  const { word, windowWidth } = props;
+
   let tiles = [];
 
-  // If it's a single character
-  //  if (word.length === 1) {
-  //    throw new Error("huh?");
-  //  }
-
   // TODO: hardcoded
-  const tileArea = 109;
-  const canvasArea = canvasSize.width * canvasSize.height;
-
   const columns = getColumns(windowWidth);
+  const canvasArea = props.canvasSize.width * props.canvasSize.height;
+  const tileArea = 109 * 109;
 
-  let tilesNum = canvasArea / tileArea;
-  //const tilesNum = 14;
+  // TODO: figure this out, since it depends on other factors
+  const tilesNum = canvasArea / tileArea;
+
+  console.log({
+    canvasArea,
+    canvasMultiplied: props.canvasSize.width * props.canvasSize.height,
+  });
+
+  if (word.length === 1) {
+    // Single kanji is easy, just fill everything
+    const c = word[0];
+
+    return (
+      <>
+        {Array.from(Array(tilesNum).keys()).map((a) => {
+          return (
+            <div
+              key={a}
+              style={{
+                width: CHARACTER_WIDTH,
+                height: CHARACTER_WIDTH,
+                background: `url(/kanji-template/${c}.svg)`,
+              }}
+            />
+          );
+        })}
+      </>
+    );
+  }
 
   let wordPointer = 0;
 
-  // TODO: set a maximum
-  for (
-    let i = 0;
-    tiles.length < tilesNum; //      i++, wordPointer = wordPointer % columns
-
-  ) {
-    console.log("currently pointing to", word[wordPointer]);
-    const index = (i % columns) % word.length;
+  for (let i = 0; tiles.length < tilesNum; ) {
     const c = word[wordPointer];
     // TODO: is this a valid way to index
 
-    // If finished word and there's more columns
-    // TODO: how do we distinguish we just finished a word or not?
-    //if (wordPointer === 0 && i > 0) {
+    // Finished word
     if (wordPointer === word.length - 1) {
-      console.log("we finished a word at", { i, index, wordPointer: c });
-
-      // Write the last character then pad it
+      // Write the last character
       tiles.push(
         <div
+          key={i}
           style={{
             width: CHARACTER_WIDTH,
             height: CHARACTER_WIDTH,
@@ -128,28 +153,20 @@ function Tiles(props: {
       i++;
       wordPointer = (wordPointer + 1) % word.length;
 
-      // Add one space
+      // Point ot the next character
+      //wordPointer = (wordPointer + 1) % word.length;
+
+      const startingAtNewLine = i % columns === 0;
       // If we start over, will it fit in the same row?
-      console.log(
-        "i % columns",
-        i % columns,
-        "wordlength",
-        word.length,
-        "columns",
-        columns
-      );
+      const spacesRequired = columns - (i % columns);
+      const paddingRequired = !startingAtNewLine && spacesRequired;
 
-      if ((i % columns) + word.length > columns) {
-        // It's not gonna fit, so let's pad until row is finished
-        const spacesRequired = columns - (i % columns);
-        console.log("padding with", spacesRequired, "spaces");
-
-        //console.log("going to the loop", i, columns);
+      // Padding until row is finished
+      if (paddingRequired) {
         for (let j = 0; j < spacesRequired; j++) {
-          console.log("padding", j);
           tiles.push(
             <div
-              key={i}
+              key={`${i}-${j}`}
               style={{
                 width: CHARACTER_WIDTH,
                 height: CHARACTER_WIDTH,
@@ -158,13 +175,16 @@ function Tiles(props: {
             ></div>
           );
           i++;
+          // }
+          continue;
         }
-        continue;
       }
+      continue;
     }
 
     tiles.push(
       <div
+        key={i}
         style={{
           width: CHARACTER_WIDTH,
           height: CHARACTER_WIDTH,
@@ -184,8 +204,13 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
-  const [assist, setAssist] = useState(false);
+  const [assist, setAssist] = useState(true);
   const word = props.kanjis.map((a) => a.name).join("");
+
+  async function syncOtherDevices() {
+    // Tell the server this page has been loaded
+    fetch(`/change-route?kanji=${word}`);
+  }
 
   useEffect(() => {
     const source = new EventSource("/stream");
@@ -193,19 +218,18 @@ export default function Draw(props: { kanjis: Kanji[] }) {
     source.onmessage = function (e) {
       const kanji = (e as any).data;
 
-      // TODO: look at route?
-      const names = props.kanjis.map((a) => a.name);
-      // TODO: validate it's a valid kanji
-      //
-      // Only refresh when the kanji actually changes
-      if (kanji !== names) {
+      // Only refresh when the content actually changes
+      if (kanji !== word) {
         router.push(`/draw/${kanji}`, null, {
           shallow: false,
         });
-        router.reload();
       }
     };
-  }, []);
+
+    return () => {
+      source.close();
+    };
+  }, [word]);
 
   useEffect(() => {
     const setCanvasSizeFn = () => {
@@ -227,20 +251,13 @@ export default function Draw(props: { kanjis: Kanji[] }) {
 
   const guidedTemplate = [];
 
-  // if it's a radical itself, don't show
-  //  const madeOf =
-  //    props.kanji.parts.length === 1 ? (
-  //      ""
-  //    ) : (
-  //      <h4>made of {props.kanji.parts.map((a) => a)}</h4>
-  //    );
-  //
+  // This is faster, but it's an optimization
   const canvasBackground = [];
-  if (assist && props.kanjis.length === 1) {
-    canvasBackground.push(
-      `repeat url(/kanji-template/${props.kanjis[0].name}.svg)`
-    );
-  }
+  //  if (assist && props.kanjis.length === 1) {
+  //    canvasBackground.push(
+  //      `repeat url(/kanji-template/${props.kanjis[0].name}.svg)`
+  //    );
+  //  }
   canvasBackground.push("repeat url(/template.svg)");
 
   return (
@@ -275,9 +292,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
       <div className={styles.reference}>
         <h4>Reference:</h4>
         <div>
-          {props.kanjis.map((k) => (
-            <Sprite kanji={k} />
-          ))}
+          <Tutorial kanjis={props.kanjis} />
         </div>
       </div>
       <div>
@@ -291,6 +306,9 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           <button onClick={() => setAssist((prevAssist) => !prevAssist)}>
             Toggle assist
           </button>
+          <button onClick={() => syncOtherDevices()}>
+            Send to other devices
+          </button>
         </div>
         <div
           ref={canvasWrapRef}
@@ -301,7 +319,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
             {guidedTemplate.map((item) => item)}
           </div>
           <div id="tiles" className={styles.tiles}>
-            {typeof window !== "undefined" && (
+            {typeof window !== "undefined" && assist && (
               <Tiles
                 word={word}
                 canvasSize={canvasSize}
