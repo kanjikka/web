@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import React, { useEffect, useRef, useState } from "react";
 import { Kanji } from "../models/kanji.schema";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const CHARACTER_WIDTH = 109;
 
@@ -47,14 +48,19 @@ const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
 });
 
 // that explanation component
-function Tutorial(props: { kanjis: Kanji[] }) {
+function Tutorial(props: { characters: Kanji[] }) {
   // Unique
-  const kanjisUnique = [...new Set(props.kanjis)];
+  const kanjisUnique = [...new Set(props.characters)];
 
   return (
     <>
       {kanjisUnique.map((k) => (
-        <TutorialTile key={k.name} kanji={k} />
+        <>
+          <h2>
+            <Link href={`/draw/${k.name}`}>{k.name}</Link>
+          </h2>
+          <TutorialTile key={k.name} kanji={k} />
+        </>
       ))}
     </>
   );
@@ -287,12 +293,12 @@ export default function Draw(props: { kanjis: Kanji[] }) {
         }}
       />
       <div className={styles.title}>
-        <h1>{props.kanjis.map((a) => a.name).join("")}</h1>
+        <Title characters={props.kanjis} />
       </div>
       <div className={styles.reference}>
         <h4>Reference:</h4>
         <div>
-          <Tutorial kanjis={props.kanjis} />
+          <Tutorial characters={props.kanjis} />
         </div>
       </div>
       <div>
@@ -337,5 +343,15 @@ export default function Draw(props: { kanjis: Kanji[] }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function Title(props: { characters: Kanji[] }) {
+  return (
+    <h1>
+      {props.characters.map((c) => {
+        return <Link href={`/draw/${c.name}`}>{c.name}</Link>;
+      })}
+    </h1>
   );
 }
