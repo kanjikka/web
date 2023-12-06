@@ -88,7 +88,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   //      `repeat url(/kanji-template/${props.kanjis[0].name}.svg)`
   //    );
   //  }
-  canvasBackground.push("repeat url(/template.svg)");
+  //  canvasBackground.push("repeat url(/template.svg)");
 
   // Clear canvas when word changes
   useEffect(() => {
@@ -165,14 +165,14 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           {tileWidthHeight}
           <button
             onClick={() =>
-              setTileWidthHeight(Math.max(50, tileWidthHeight - 10))
+              setTileWidthHeight(Math.max(59, tileWidthHeight - 10))
             }
           >
             -
           </button>
           <button
             onClick={() =>
-              setTileWidthHeight(Math.min(150, tileWidthHeight + 10))
+              setTileWidthHeight(Math.min(149, tileWidthHeight + 10))
             }
           >
             +
@@ -331,10 +331,11 @@ function Tiles(props: {
       tiles.push(
         <div
           key={i}
+          className={styles.tile}
           style={{
             width: tileWidthHeight,
             height: tileWidthHeight,
-            background: `url(/kanji-template/${c}.svg)`,
+            backgroundImage: `url(/kanji-template/${c}.svg)`,
           }}
         ></div>
       );
@@ -355,10 +356,11 @@ function Tiles(props: {
           tiles.push(
             <div
               key={`${i}-${j}`}
+              className={styles.tile}
               style={{
                 width: tileWidthHeight,
                 height: tileWidthHeight,
-                background: `url(/kanji-template/ .svg)`,
+                backgroundImage: `url(/kanji-template/ .svg)`,
               }}
             ></div>
           );
@@ -373,10 +375,11 @@ function Tiles(props: {
     tiles.push(
       <div
         key={i}
+        className={styles.tile}
         style={{
           width: tileWidthHeight,
           height: tileWidthHeight,
-          background: `url(/kanji-template/${c}.svg)`,
+          backgroundImage: `url(/kanji-template/${c}.svg)`,
         }}
       ></div>
     );

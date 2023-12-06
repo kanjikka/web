@@ -1,7 +1,6 @@
-
 .container {
   --main-columns: 7;
-  max-width: calc(109px * var(--main-columns));
+  max-width: 90%;
   margin: 0 auto;
 
   padding-bottom: 80px;
@@ -12,14 +11,21 @@
 }
 
 .canvasContainer {
+  border: 1px solid black;
   --main-columns: 7;
   position: relative;
+  /*
   background: repeat url(/template.svg);
-  width: calc(109px * var(--main-columns));
-  height: calc(109px * var(--main-columns));
+  */
+  /*
+  width: calc(var(--tile-width) * var(--main-columns));
+  */
+  /* TODO: figure out a way to use all available, ideally we would use all available space at minimum */
+  min-height: calc(var(--tile-height) * 7);
 
   overflow: hidden;
 }
+
 
 .canvas {
   position: absolute;
@@ -40,13 +46,21 @@
   flex-direction: row;
   flex-wrap: wrap;
 }
+.tile {
+  width: var(--tile-width);
+  height: var(--tile-height);
+  /* We want to scale the tile automatically by setting the tile-width */
+  background-size: contain;
+  background-repeat: no-repeat;
+}
 
 .sprite {}
 .sprite > * {
   display: inline-block;
 }
 
-/* TODO: maybe use sass somehow? */
+/* TODO: what should change is the margin */
+/*
 @media screen and (min-width: 1526px) {
   .canvasContainer, .container {
     --main-columns: 15;
@@ -104,4 +118,5 @@
     --main-columns: 3;
   }
 }
+*/
 
