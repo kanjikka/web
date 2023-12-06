@@ -6,8 +6,6 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSyncContext } from "../../pages/sync";
 
-const CHARACTER_WIDTH = 109;
-
 // TODO: sync this with css
 // responsive
 const columns = {
@@ -54,6 +52,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   const canvasWrapRef = useRef(null);
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [assist, setAssist] = useState(true);
+  const [tileWidthHeight, setTileWidthHeight] = useState(109);
   const word = props.kanjis.map((a) => a.name).join("");
   const { syncConfig, toggleLocked } = useSyncContext();
 
@@ -95,6 +94,17 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   useEffect(() => {
     canvasRef.current?.clear();
   }, [word]);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--tile-width",
+      `${tileWidthHeight}px`
+    );
+    document.documentElement.style.setProperty(
+      "--tile-height",
+      `${tileWidthHeight}px`
+    );
+  }, [tileWidthHeight]);
 
   return (
     <div className={styles.container}>
@@ -152,6 +162,21 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           <button onClick={() => toggleLocked()}>
             {syncConfig.locked ? "Enable" : "Disable"} Sync
           </button>
+          {tileWidthHeight}
+          <button
+            onClick={() =>
+              setTileWidthHeight(Math.max(50, tileWidthHeight - 10))
+            }
+          >
+            -
+          </button>
+          <button
+            onClick={() =>
+              setTileWidthHeight(Math.min(150, tileWidthHeight + 10))
+            }
+          >
+            +
+          </button>
         </div>
         <div
           ref={canvasWrapRef}
@@ -164,6 +189,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           <div id="tiles" className={styles.tiles}>
             {typeof window !== "undefined" && assist && (
               <Tiles
+                tileWidthHeight={tileWidthHeight}
                 word={word}
                 canvasSize={canvasSize}
                 windowWidth={window.innerWidth}
@@ -245,20 +271,27 @@ function TutorialTile(props: { kanji: Kanji }) {
 
 function Tiles(props: {
   word: string;
+  tileWidthHeight: number;
   canvasSize: { width: number; height: number };
   windowWidth: number;
 }) {
-  const { word, windowWidth } = props;
+  const { word, windowWidth, tileWidthHeight } = props;
 
   let tiles = [];
 
   // TODO: hardcoded
   const columns = getColumns(windowWidth);
   const canvasArea = props.canvasSize.width * props.canvasSize.height;
-  const tileArea = 109 * 109;
+  const tileArea = tileWidthHeight * tileWidthHeight;
 
   // TODO: figure this out, since it depends on other factors
-  const tilesNum = canvasArea / tileArea;
+  const tilesNum = Math.floor(canvasArea / tileArea);
+  console.log({
+    tilesNum,
+  });
+  if (!tilesNum) {
+    return <></>;
+  }
 
   //  console.log({
   //    canvasArea,
@@ -275,10 +308,9 @@ function Tiles(props: {
           return (
             <div
               key={a}
+              className={styles.tile}
               style={{
-                width: CHARACTER_WIDTH,
-                height: CHARACTER_WIDTH,
-                background: `url(/kanji-template/${c}.svg)`,
+                backgroundImage: `url(/kanji-template/${c}.svg)`,
               }}
             />
           );
@@ -300,8 +332,8 @@ function Tiles(props: {
         <div
           key={i}
           style={{
-            width: CHARACTER_WIDTH,
-            height: CHARACTER_WIDTH,
+            width: tileWidthHeight,
+            height: tileWidthHeight,
             background: `url(/kanji-template/${c}.svg)`,
           }}
         ></div>
@@ -324,8 +356,8 @@ function Tiles(props: {
             <div
               key={`${i}-${j}`}
               style={{
-                width: CHARACTER_WIDTH,
-                height: CHARACTER_WIDTH,
+                width: tileWidthHeight,
+                height: tileWidthHeight,
                 background: `url(/kanji-template/ .svg)`,
               }}
             ></div>
@@ -342,8 +374,8 @@ function Tiles(props: {
       <div
         key={i}
         style={{
-          width: CHARACTER_WIDTH,
-          height: CHARACTER_WIDTH,
+          width: tileWidthHeight,
+          height: tileWidthHeight,
           background: `url(/kanji-template/${c}.svg)`,
         }}
       ></div>
