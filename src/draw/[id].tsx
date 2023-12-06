@@ -187,7 +187,11 @@ function Title(props: { characters: Kanji[] }) {
   return (
     <h1>
       {props.characters.map((c) => {
-        return <Link href={`/draw/${c.name}`}>{c.name}</Link>;
+        return (
+          <Link key={c.name} href={`/draw/${c.name}`}>
+            {c.name}
+          </Link>
+        );
       })}
     </h1>
   );
@@ -201,12 +205,12 @@ function Tutorial(props: { characters: Kanji[] }) {
   return (
     <>
       {kanjisUnique.map((k) => (
-        <>
+        <div key={k.name}>
           <h2>
             <Link href={`/draw/${k.name}`}>{k.name}</Link>
           </h2>
           <TutorialTile key={k.name} kanji={k} />
-        </>
+        </div>
       ))}
     </>
   );
