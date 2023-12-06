@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Kanji } from "../models/kanji.schema";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { useSyncContext } from "../../pages/sync";
 
 const CHARACTER_WIDTH = 109;
 
@@ -54,6 +55,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
   const [assist, setAssist] = useState(true);
   const word = props.kanjis.map((a) => a.name).join("");
+  const { syncConfig, toggleLocked } = useSyncContext();
 
   async function syncOtherDevices() {
     // Tell the server this page has been loaded
@@ -92,7 +94,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   // Clear canvas when word changes
   useEffect(() => {
     canvasRef.current?.clear();
-  }, [word, canvasRef.current]);
+  }, [word]);
 
   return (
     <div className={styles.container}>
@@ -136,6 +138,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
       <div>
         <h4>Practice:</h4>
 
+        {/* toolbar */}
         <div>
           <button onClick={() => canvasRef?.current?.undo()}>undo</button>
           <button onClick={() => canvasRef?.current?.redo()}>redo</button>
@@ -145,6 +148,9 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           </button>
           <button onClick={() => syncOtherDevices()}>
             Send to other devices
+          </button>
+          <button onClick={() => toggleLocked()}>
+            {syncConfig.locked ? "Enable" : "Disable"} Sync
           </button>
         </div>
         <div
@@ -166,7 +172,6 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           </div>
 
           <PracticeCanvas
-            currentWord={word}
             forwardRef={canvasRef}
             width={canvasSize.width}
             height={canvasSize.height}
@@ -251,10 +256,10 @@ function Tiles(props: {
   // TODO: figure this out, since it depends on other factors
   const tilesNum = canvasArea / tileArea;
 
-  console.log({
-    canvasArea,
-    canvasMultiplied: props.canvasSize.width * props.canvasSize.height,
-  });
+  //  console.log({
+  //    canvasArea,
+  //    canvasMultiplied: props.canvasSize.width * props.canvasSize.height,
+  //  });
 
   if (word.length === 1) {
     // Single kanji is easy, just fill everything

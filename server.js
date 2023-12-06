@@ -37,9 +37,11 @@ app.prepare().then(() => {
       if (pathname == "/change-route") {
         console.log("emitting event");
         console.log("query param is", query);
-        myEmitter.emit("event", query.kanji);
-        res.writeHead(200);
-        res.end();
+        if (query.kanji) {
+          myEmitter.emit("event", query.kanji);
+          res.writeHead(200);
+          res.end();
+        }
       } else if (pathname == "/stream") {
         console.log("established connection");
         res.writeHead(200, {

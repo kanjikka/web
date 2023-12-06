@@ -60,7 +60,7 @@ export async function getServerSideProps(context: any) {
   );
 
   // Break into individual characters
-  const chars = context.params.id.split("");
+  const chars = context.params.id.split("").filter((a) => a.trim().length);
 
   const requests = chars.map(async (a) => {
     const res = await datastore.getCharacter(db, a);
