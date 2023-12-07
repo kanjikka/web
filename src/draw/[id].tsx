@@ -4,35 +4,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { Kanji } from "../models/kanji.schema";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useSyncContext } from "../../pages/sync";
+import { useSyncContext, sendToOtherDevices } from "../../pages/sync";
 import { Tiles } from "./Tiles";
 import { Tutorial } from "./Tutorial";
 import { Title } from "./Title";
 import { KeyboardHandler } from "./Keyboard";
-
-// TODO: not the most optimal way
-function findDivisors(n: number) {
-  const THRESHOLD = 3;
-  const divisors = [];
-
-  for (let i = 1; i <= n; i++) {
-    const res = n % i;
-    if (res >= 0 && res <= THRESHOLD) {
-      divisors.push(i);
-    }
-  }
-
-  return divisors;
-}
-
-function filterBetween(lower: number, higher: number, arr: number[]) {
-  return arr.filter((a) => a >= lower && a <= higher);
-}
-
-const KeyboardEventHandler = dynamic(
-  () => import("react-keyboard-event-handler"),
-  { ssr: false }
-);
+import { Toolbar } from "./Toolbar";
+import { useZoom } from "./useZoom";
+import { useCanvasObserver } from "./useCanvasObserver";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
@@ -42,70 +21,21 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   const router = useRouter();
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
-  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const { canvasWidth, canvasHeight } = useCanvasObserver({
+    canvasWrapRef,
+    canvasRef,
+  });
   const [assist, setAssist] = useState(true);
-  const [tileWidthHeight, setTileWidthHeight] = useState(109);
   const word = props.kanjis.map((a) => a.name).join("");
   const { syncConfig, toggleLocked } = useSyncContext();
-
-  async function syncOtherDevices() {
-    // Tell the server this page has been loaded
-    fetch(`/change-route?kanji=${word}`);
-  }
-
-  useEffect(() => {
-    const setCanvasSizeFn = () => {
-      if (canvasWrapRef && canvasWrapRef.current) {
-        document.documentElement.style.setProperty(
-          "--canvas-width",
-          `${canvasWrapRef.current.offsetWidth}px`
-        );
-
-        setCanvasSize({
-          width: canvasWrapRef.current.offsetWidth,
-          height: canvasWrapRef.current.offsetHeight,
-        });
-      }
-    };
-
-    // record listener
-    window.addEventListener("resize", () => {
-      setCanvasSizeFn();
-    });
-    // run for the first time
-    setCanvasSizeFn();
-  }, [canvasWrapRef.current]);
+  const { tileWidth, zoomIn, zoomOut, canZoomIn, canZoomOut } = useZoom({
+    canvasWidth,
+  });
 
   // Clear canvas when word changes
   useEffect(() => {
     canvasRef.current?.clear();
   }, [word]);
-
-  useEffect(() => {
-    document.documentElement.style.setProperty(
-      "--tile-width",
-      `${tileWidthHeight}px`
-    );
-    document.documentElement.style.setProperty(
-      "--tile-height",
-      `${tileWidthHeight}px`
-    );
-  }, [tileWidthHeight]);
-
-  // Since we will add borders to the first and last item
-  // They also needed to be accounted for
-  const canvasSizeWidth = canvasSize.width - 2;
-  const divisors = filterBetween(50, 200, findDivisors(canvasSizeWidth));
-  //  console.log("all divisors without filtering", findDivisors(canvasSize.width));
-
-  useEffect(() => {
-    // TODO: set a default...
-    // In fact it should be as close as possible to the real size
-    if (canvasSize.width > 0) {
-      const median = divisors[Math.floor(divisors.length / 2)];
-      setTileWidthHeight(median);
-    }
-  }, [canvasSize.width]);
 
   return (
     <div className={styles.container}>
@@ -123,52 +53,26 @@ export default function Draw(props: { kanjis: Kanji[] }) {
       <div>
         <h4>Practice:</h4>
 
-        {/* toolbar */}
-        <div>
-          <button onClick={() => canvasRef?.current?.undo()}>undo</button>
-          <button onClick={() => canvasRef?.current?.redo()}>redo</button>
-          <button onClick={() => canvasRef?.current?.clear()}>clear</button>
-          <button onClick={() => setAssist((prevAssist) => !prevAssist)}>
-            Toggle assist
-          </button>
-          <button onClick={() => syncOtherDevices()}>
-            Send to other devices
-          </button>
-          <button onClick={() => toggleLocked()}>
-            {syncConfig.locked ? "Enable" : "Disable"} Sync
-          </button>
-          {tileWidthHeight}
-          <button
-            onClick={() => {
-              // Find current size
-              const i = divisors.findIndex((a) => a === tileWidthHeight);
-              if (i > 0) {
-                setTileWidthHeight(divisors[i - 1]);
-              }
-            }}
-          >
-            Zoom out (-)
-          </button>
-          <button
-            onClick={() => {
-              // Find current size
-              const i = divisors.findIndex((a) => a === tileWidthHeight);
-              if (i < divisors.length - 1) {
-                setTileWidthHeight(divisors[i + 1]);
-              }
-            }}
-          >
-            Zoom In (+)
-          </button>
-        </div>
+        <Toolbar
+          canvasRef={canvasRef}
+          toggleAssist={() => setAssist((prevAssist) => !prevAssist)}
+          sync={() => sendToOtherDevices(word)}
+          isLocked={syncConfig.locked}
+          toggleLocked={toggleLocked}
+          canZoomIn={canZoomIn}
+          canZoomOut={canZoomOut}
+          zoomIn={zoomIn}
+          zoomOut={zoomOut}
+        />
+
         <div ref={canvasWrapRef} className={styles.canvasContainer}>
           <div>
             <div id="tiles" className={styles.tiles}>
               {typeof window !== "undefined" && assist && (
                 <Tiles
-                  tileWidthHeight={tileWidthHeight}
+                  tileWidth={tileWidth}
                   word={word}
-                  canvasSize={canvasSize}
+                  canvasWidth={canvasWidth}
                   windowWidth={window.innerWidth}
                 />
               )}
@@ -178,8 +82,8 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           <KeyboardHandler canvasRef={canvasRef} />
           <PracticeCanvas
             forwardRef={canvasRef}
-            width={canvasSize.width}
-            height={canvasSize.height}
+            width={canvasWidth}
+            height={canvasHeight}
             className={styles.canvas}
           ></PracticeCanvas>
         </div>

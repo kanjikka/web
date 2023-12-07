@@ -2,15 +2,15 @@ import styles from "./Tiles.module.css";
 
 export function Tiles(props: {
   word: string;
-  tileWidthHeight: number;
-  canvasSize: { width: number; height: number };
+  tileWidth: number;
+  canvasWidth: number;
   windowWidth: number;
 }) {
-  const { word, tileWidthHeight } = props;
+  const { word, tileWidth } = props;
 
   let tiles = [];
 
-  const columns = Math.floor(props.canvasSize.width / tileWidthHeight);
+  const columns = Math.floor(props.canvasWidth / tileWidth);
 
   // TODO: figure this out, since it depends on other factors
   const tilesNum = columns * 7;
@@ -84,8 +84,8 @@ export function Tiles(props: {
           className={styles.tile}
           style={{
             ...findBorder(i),
-            width: tileWidthHeight,
-            height: tileWidthHeight,
+            width: tileWidth,
+            height: tileWidth,
             backgroundImage: `url(/kanji-template/${c}.svg)`,
           }}
         ></div>
@@ -110,8 +110,8 @@ export function Tiles(props: {
               className={styles.tile}
               style={{
                 ...findBorder(i),
-                width: tileWidthHeight,
-                height: tileWidthHeight,
+                width: tileWidth,
+                height: tileWidth,
                 //                backgroundImage: `url(/kanji-template/ .svg)`,
                 backgroundImage: "url(/kanji-template/template.svg)",
               }}
@@ -131,8 +131,8 @@ export function Tiles(props: {
         className={styles.tile}
         style={{
           ...findBorder(i),
-          width: tileWidthHeight,
-          height: tileWidthHeight,
+          width: tileWidth,
+          height: tileWidth,
           backgroundImage: `url(/kanji-template/${c}.svg)`,
         }}
       ></div>
