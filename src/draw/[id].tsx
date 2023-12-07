@@ -186,9 +186,9 @@ export default function Draw(props: { kanjis: Kanji[] }) {
 function Title(props: { characters: Kanji[] }) {
   return (
     <h1>
-      {props.characters.map((c) => {
+      {props.characters.map((c, i) => {
         return (
-          <Link key={c.name} href={`/draw/${c.name}`}>
+          <Link key={`${c.name}-${i}`} href={`/draw/${c.name}`}>
             {c.name}
           </Link>
         );
@@ -199,8 +199,10 @@ function Title(props: { characters: Kanji[] }) {
 
 // that explanation component
 function Tutorial(props: { characters: Kanji[] }) {
-  // Unique
-  const kanjisUnique = [...new Set(props.characters)];
+  // Unique, O(n**2)
+  const kanjisUnique = props.characters.filter(
+    (c, i, arr) => arr.findIndex((a) => a.name == c.name) === i
+  );
 
   return (
     <>
