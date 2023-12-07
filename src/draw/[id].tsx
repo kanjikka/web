@@ -101,8 +101,11 @@ export default function Draw(props: { kanjis: Kanji[] }) {
     );
   }, [tileWidthHeight]);
 
-  const divisors = filterBetween(50, 200, findDivisors(canvasSize.width));
-  console.log("all divisors without filtering", findDivisors(canvasSize.width));
+  // Since we will add borders to the first and last item
+  // They also needed to be accounted for
+  const canvasSizeWidth = canvasSize.width - 2;
+  const divisors = filterBetween(50, 200, findDivisors(canvasSizeWidth));
+  //  console.log("all divisors without filtering", findDivisors(canvasSize.width));
 
   useEffect(() => {
     // TODO: set a default...
@@ -110,7 +113,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
     if (canvasSize.width > 0) {
       const median = divisors[Math.floor(divisors.length / 2)];
       console.log("median", median);
-      console.log("all divosors of", canvasSize.width, divisors);
+      console.log("all divosors of", canvasSizeWidth, divisors);
       setTileWidthHeight(median);
     }
   }, [canvasSize.width]);
@@ -181,7 +184,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
               }
             }}
           >
-            -
+            Zoom out (-)
           </button>
           <button
             onClick={() => {
@@ -192,7 +195,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
               }
             }}
           >
-            +
+            Zoom In (+)
           </button>
         </div>
         <div
@@ -203,7 +206,7 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           <div id="guided-template" className={styles.spriteContainer}>
             {guidedTemplate.map((item) => item)}
           </div>
-          <div style={{ border: "1px solid #ddd" }}>
+          <div>
             <div id="tiles" className={styles.tiles}>
               {typeof window !== "undefined" && assist && (
                 <Tiles
@@ -304,6 +307,39 @@ function Tiles(props: {
 
   // TODO: figure this out, since it depends on other factors
   const tilesNum = columns * 7;
+
+  function findBorder(i: number) {
+    const border = "1px solid #ddd";
+    const styles: React.CSSProperties = {};
+
+    // Left
+    if (i % columns === 0) {
+      styles.borderLeft = border;
+    }
+    if (i % columns == columns - 1) {
+      styles.borderRight = border;
+    }
+
+    if (i >= 0 && i < columns) {
+      styles.borderTop = border;
+    }
+
+    if (i >= tilesNum - columns && i < tilesNum) {
+      styles.borderBottom = border;
+    }
+
+    return styles;
+  }
+
+  // TODO:
+  // em cada tile individual
+  // box-sizing: content-box;
+  // ai aplica a borda corretamente
+  // n % NUM_COLUMN == 0, na esquerda
+  // N % NUM_COLUMN = NUM_COLUMN -1, na direita
+  // os primeiros entre 0 e NUM_COLUMN, em cima
+  // os ultimos entre, entre TOTAL - NUM_COLUMN e NUM_COLUMN
+
   if (!tilesNum) {
     return <></>;
   }
@@ -325,6 +361,7 @@ function Tiles(props: {
               key={a}
               className={styles.tile}
               style={{
+                ...findBorder(a),
                 backgroundImage: `url(/kanji-template/${c}.svg)`,
               }}
             />
@@ -348,6 +385,7 @@ function Tiles(props: {
           key={i}
           className={styles.tile}
           style={{
+            ...findBorder(i),
             width: tileWidthHeight,
             height: tileWidthHeight,
             backgroundImage: `url(/kanji-template/${c}.svg)`,
@@ -373,6 +411,7 @@ function Tiles(props: {
               key={`${i}-${j}`}
               className={styles.tile}
               style={{
+                ...findBorder(i),
                 width: tileWidthHeight,
                 height: tileWidthHeight,
                 //                backgroundImage: `url(/kanji-template/ .svg)`,
@@ -393,6 +432,7 @@ function Tiles(props: {
         key={i}
         className={styles.tile}
         style={{
+          ...findBorder(i),
           width: tileWidthHeight,
           height: tileWidthHeight,
           backgroundImage: `url(/kanji-template/${c}.svg)`,
