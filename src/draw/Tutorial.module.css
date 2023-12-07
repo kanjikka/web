@@ -1,0 +1,4 @@
+.sprite {}
+.sprite > * {
+  display: inline-block;
+}
