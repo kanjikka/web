@@ -5,6 +5,11 @@ export function useSyncContext() {
   return useContext(SyncContext);
 }
 
+export function sendToOtherDevices(word: string) {
+  // Tell the server this page has been loaded
+  fetch(`/change-route?kanji=${word}`);
+}
+
 export function useSync(
   router: ReturnType<typeof useRouter>,
   turnedOn: boolean

@@ -29,7 +29,7 @@ export default function PCanvas({
   return <PracticeCanvas ref={forwardRef} {...props} />;
 }
 
-type PracticeCanvasHandle = {
+export type PracticeCanvasHandle = {
   undo: () => void;
   redo: () => void;
   clear: () => void;

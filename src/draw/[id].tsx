@@ -4,45 +4,14 @@ import React, { useEffect, useRef, useState } from "react";
 import { Kanji } from "../models/kanji.schema";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { useSyncContext } from "../../pages/sync";
-
-const CHARACTER_WIDTH = 109;
-
-// TODO: sync this with css
-// responsive
-const columns = {
-  9999: 15,
-  1526: 12,
-  1417: 11,
-  1308: 10,
-  1199: 9,
-  1090: 8,
-  981: 7,
-  872: 6,
-  763: 5,
-  654: 4,
-  545: 3,
-};
-
-function getColumns(screenWidth: number) {
-  // Sort by number
-  const entries = Object.entries(columns).sort((a, b) => {
-    return parseInt(a[0], 10) - parseInt(b[0], 10);
-  });
-
-  const found = entries.find((s) => {
-    return screenWidth < parseInt(s[0], 10);
-  });
-
-  return found[1];
-}
-
-const KeyboardEventHandler = dynamic(
-  () => import("react-keyboard-event-handler"),
-  {
-    ssr: false,
-  }
-);
+import { useSyncContext, sendToOtherDevices } from "../../pages/sync";
+import { Tiles } from "./Tiles";
+import { Tutorial } from "./Tutorial";
+import { Title } from "./Title";
+import { KeyboardHandler } from "./Keyboard";
+import { Toolbar } from "./Toolbar";
+import { useZoom } from "./useZoom";
+import { useCanvasObserver } from "./useCanvasObserver";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
@@ -52,44 +21,16 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   const router = useRouter();
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
-  const [canvasSize, setCanvasSize] = useState({ width: 0, height: 0 });
+  const { canvasWidth, canvasHeight } = useCanvasObserver({
+    canvasWrapRef,
+    canvasRef,
+  });
   const [assist, setAssist] = useState(true);
   const word = props.kanjis.map((a) => a.name).join("");
   const { syncConfig, toggleLocked } = useSyncContext();
-
-  async function syncOtherDevices() {
-    // Tell the server this page has been loaded
-    fetch(`/change-route?kanji=${word}`);
-  }
-
-  useEffect(() => {
-    const setCanvasSizeFn = () => {
-      if (canvasWrapRef && canvasWrapRef.current) {
-        setCanvasSize({
-          width: canvasWrapRef.current.offsetWidth,
-          height: canvasWrapRef.current.offsetHeight,
-        });
-      }
-    };
-
-    // record listener
-    window.addEventListener("resize", () => {
-      setCanvasSizeFn();
-    });
-    // run for the first time
-    setCanvasSizeFn();
-  }, [canvasWrapRef.current]);
-
-  const guidedTemplate = [];
-
-  // This is faster, but it's an optimization
-  const canvasBackground = [];
-  //  if (assist && props.kanjis.length === 1) {
-  //    canvasBackground.push(
-  //      `repeat url(/kanji-template/${props.kanjis[0].name}.svg)`
-  //    );
-  //  }
-  canvasBackground.push("repeat url(/template.svg)");
+  const { tileWidth, zoomIn, zoomOut, canZoomIn, canZoomOut } = useZoom({
+    canvasWidth,
+  });
 
   // Clear canvas when word changes
   useEffect(() => {
@@ -102,257 +43,51 @@ export default function Draw(props: { kanjis: Kanji[] }) {
       <button onClick={() => router.back()}>Go Back</button>
       <Link href="/">Go to home page</Link>
 
-      <KeyboardEventHandler
-        handleKeys={["ctrl+z", "ctrl+r", "ctrl+l"]}
-        onKeyEvent={(key: string, e: KeyboardEvent) => {
-          e.preventDefault();
-          switch (key) {
-            case "ctrl+z": {
-              canvasRef.current.undo();
-              break;
-            }
-            case "ctrl+r": {
-              canvasRef.current.redo();
-              break;
-            }
-            case "ctrl+l": {
-              canvasRef.current.clear();
-              break;
-            }
-
-            default: {
-              throw new Error("key not implemented" + key);
-            }
-          }
-        }}
-      />
       <div className={styles.title}>
         <Title characters={props.kanjis} />
       </div>
       <div className={styles.reference}>
-        <h4>Reference:</h4>
-        <div>
-          <Tutorial characters={props.kanjis} />
-        </div>
+        <h4>Tutorial:</h4>
+        <Tutorial characters={props.kanjis} />
       </div>
       <div>
         <h4>Practice:</h4>
 
-        {/* toolbar */}
-        <div>
-          <button onClick={() => canvasRef?.current?.undo()}>undo</button>
-          <button onClick={() => canvasRef?.current?.redo()}>redo</button>
-          <button onClick={() => canvasRef?.current?.clear()}>clear</button>
-          <button onClick={() => setAssist((prevAssist) => !prevAssist)}>
-            Toggle assist
-          </button>
-          <button onClick={() => syncOtherDevices()}>
-            Send to other devices
-          </button>
-          <button onClick={() => toggleLocked()}>
-            {syncConfig.locked ? "Enable" : "Disable"} Sync
-          </button>
-        </div>
-        <div
-          ref={canvasWrapRef}
-          className={styles.canvasContainer}
-          style={{ background: canvasBackground.join(",") }}
-        >
-          <div id="guided-template" className={styles.spriteContainer}>
-            {guidedTemplate.map((item) => item)}
-          </div>
-          <div id="tiles" className={styles.tiles}>
-            {typeof window !== "undefined" && assist && (
-              <Tiles
-                word={word}
-                canvasSize={canvasSize}
-                windowWidth={window.innerWidth}
-              />
-            )}
+        <Toolbar
+          canvasRef={canvasRef}
+          toggleAssist={() => setAssist((prevAssist) => !prevAssist)}
+          sync={() => sendToOtherDevices(word)}
+          isLocked={syncConfig.locked}
+          toggleLocked={toggleLocked}
+          canZoomIn={canZoomIn}
+          canZoomOut={canZoomOut}
+          zoomIn={zoomIn}
+          zoomOut={zoomOut}
+        />
+
+        <div ref={canvasWrapRef} className={styles.canvasContainer}>
+          <div>
+            <div id="tiles" className={styles.tiles}>
+              {typeof window !== "undefined" && assist && (
+                <Tiles
+                  tileWidth={tileWidth}
+                  word={word}
+                  canvasWidth={canvasWidth}
+                  windowWidth={window.innerWidth}
+                />
+              )}
+            </div>
           </div>
 
+          <KeyboardHandler canvasRef={canvasRef} />
           <PracticeCanvas
             forwardRef={canvasRef}
-            width={canvasSize.width}
-            height={canvasSize.height}
+            width={canvasWidth}
+            height={canvasHeight}
             className={styles.canvas}
           ></PracticeCanvas>
         </div>
       </div>
     </div>
   );
-}
-
-function Title(props: { characters: Kanji[] }) {
-  return (
-    <h1>
-      {props.characters.map((c, i) => {
-        return (
-          <Link key={`${c.name}-${i}`} href={`/draw/${c.name}`}>
-            {c.name}
-          </Link>
-        );
-      })}
-    </h1>
-  );
-}
-
-// that explanation component
-function Tutorial(props: { characters: Kanji[] }) {
-  // Unique, O(n**2)
-  const kanjisUnique = props.characters.filter(
-    (c, i, arr) => arr.findIndex((a) => a.name == c.name) === i
-  );
-
-  return (
-    <>
-      {kanjisUnique.map((k) => (
-        <div key={k.name}>
-          <h2>
-            <Link href={`/draw/${k.name}`}>{k.name}</Link>
-          </h2>
-          <TutorialTile key={k.name} kanji={k} />
-        </div>
-      ))}
-    </>
-  );
-}
-
-function TutorialTile(props: { kanji: Kanji }) {
-  const strokeCount = Math.floor(
-    props.kanji.svg.width / props.kanji.svg.individualWidth
-  );
-
-  return (
-    <div className={styles.sprite}>
-      {Array.from(Array(strokeCount).keys()).map((i) => {
-        return (
-          <div
-            key={i}
-            style={{
-              backgroundImage: `url("/svg/${props.kanji.name}.svg")`,
-              backgroundPositionX: `-${
-                (i * props.kanji.svg.width) / strokeCount
-              }px`,
-
-              width: props.kanji.svg.width / strokeCount,
-              height: props.kanji.svg.height,
-            }}
-          ></div>
-        );
-      })}
-    </div>
-  );
-}
-
-function Tiles(props: {
-  word: string;
-  canvasSize: { width: number; height: number };
-  windowWidth: number;
-}) {
-  const { word, windowWidth } = props;
-
-  let tiles = [];
-
-  // TODO: hardcoded
-  const columns = getColumns(windowWidth);
-  const canvasArea = props.canvasSize.width * props.canvasSize.height;
-  const tileArea = 109 * 109;
-
-  // TODO: figure this out, since it depends on other factors
-  const tilesNum = canvasArea / tileArea;
-
-  //  console.log({
-  //    canvasArea,
-  //    canvasMultiplied: props.canvasSize.width * props.canvasSize.height,
-  //  });
-
-  if (word.length === 1) {
-    // Single kanji is easy, just fill everything
-    const c = word[0];
-
-    return (
-      <>
-        {Array.from(Array(tilesNum).keys()).map((a) => {
-          return (
-            <div
-              key={a}
-              style={{
-                width: CHARACTER_WIDTH,
-                height: CHARACTER_WIDTH,
-                background: `url(/kanji-template/${c}.svg)`,
-              }}
-            />
-          );
-        })}
-      </>
-    );
-  }
-
-  let wordPointer = 0;
-
-  for (let i = 0; tiles.length < tilesNum; ) {
-    const c = word[wordPointer];
-    // TODO: is this a valid way to index
-
-    // Finished word
-    if (wordPointer === word.length - 1) {
-      // Write the last character
-      tiles.push(
-        <div
-          key={i}
-          style={{
-            width: CHARACTER_WIDTH,
-            height: CHARACTER_WIDTH,
-            background: `url(/kanji-template/${c}.svg)`,
-          }}
-        ></div>
-      );
-      i++;
-      wordPointer = (wordPointer + 1) % word.length;
-
-      // Point ot the next character
-      //wordPointer = (wordPointer + 1) % word.length;
-
-      const startingAtNewLine = i % columns === 0;
-      // If we start over, will it fit in the same row?
-      const spacesRequired = columns - (i % columns);
-      const paddingRequired = !startingAtNewLine && spacesRequired;
-
-      // Padding until row is finished
-      if (paddingRequired) {
-        for (let j = 0; j < spacesRequired; j++) {
-          tiles.push(
-            <div
-              key={`${i}-${j}`}
-              style={{
-                width: CHARACTER_WIDTH,
-                height: CHARACTER_WIDTH,
-                background: `url(/kanji-template/ .svg)`,
-              }}
-            ></div>
-          );
-          i++;
-          // }
-          continue;
-        }
-      }
-      continue;
-    }
-
-    tiles.push(
-      <div
-        key={i}
-        style={{
-          width: CHARACTER_WIDTH,
-          height: CHARACTER_WIDTH,
-          background: `url(/kanji-template/${c}.svg)`,
-        }}
-      ></div>
-    );
-    i++;
-    wordPointer = (wordPointer + 1) % word.length;
-  }
-
-  return <>{tiles}</>;
 }
