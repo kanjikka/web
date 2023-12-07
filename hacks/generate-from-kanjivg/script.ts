@@ -58,6 +58,71 @@ function processFile(filename: string, out: string) {
   $("svg text").remove();
   //  const myStyles = "stroke:#ddd;stroke-width:2";
   //const myStyles = "stroke:#999;";
+
+  // Add the guides
+  // A horizontal line
+  $("svg").append(
+    `
+   <line xmlns="http://www.w3.org/2000/svg" x1="0" y1="${
+     svgSchemaParsed.height / 2
+   }" x2="${svgSchemaParsed.width}" y2="${
+      svgSchemaParsed.height / 2
+    }" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"/>
+   `
+  );
+
+  // A vertical line
+  $("svg").append(
+    `
+   <line xmlns="http://www.w3.org/2000/svg" x1="${
+     svgSchemaParsed.width / 2
+   }" y1="0" x2="${svgSchemaParsed.width / 2}" y2="${
+      svgSchemaParsed.height
+    }" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"/>
+   `
+  );
+
+  const w = svgSchemaParsed.width;
+  const h = svgSchemaParsed.height;
+
+  // Box around it
+  // We use stroke-width, which will then collapse and become 2 when rendering!
+  $("svg").append(
+    `<line xmlns="http://www.w3.org/2000/svg"
+    x1="0"
+    y1="0"
+    x2="0"
+    y2="${h}"
+    style="stroke:#ddd;stroke-width:1;"/>`
+  );
+
+  $("svg").append(
+    `<line xmlns="http://www.w3.org/2000/svg"
+    x1="${w}"
+    y1="0"
+    x2="${w}"
+    y2="${h}"
+    style="stroke:#ddd;stroke-width:1;"/>`
+  );
+
+  $("svg").append(
+    `<line xmlns="http://www.w3.org/2000/svg"
+    x1="0"
+    y1="0"
+    x2="${w}"
+    y2="0"
+    style="stroke:#ddd;stroke-width:1;"/>`
+  );
+
+  $("svg").append(
+    `<line xmlns="http://www.w3.org/2000/svg"
+    x1="0"
+    y1="${h}"
+    x2="${w}"
+    y2="${h}"
+    style="stroke:#ddd;stroke-width:1;"/>`
+  );
+
   const myStyles = "stroke:#ddd;";
   const styles = $("svg > g").first().attr("style");
   $("svg > g").first().attr("style", `${styles};${myStyles}`);
@@ -66,6 +131,103 @@ function processFile(filename: string, out: string) {
   fs.writeFileSync(out, s);
 }
 
+function createTemplate(filename: string, out: string) {
+  const file = fs.readFileSync(filename, "utf8");
+
+  let svgParsed = svgParser.parse(file);
+
+  const svgSchemaParsed = svgSchema.parse(
+    (svgParsed.children[0] as any).properties
+  );
+
+  const $ = cheerio.load(file, {
+    decodeEntities: false,
+    xmlMode: true,
+    recognizeCDATA: true,
+    recognizeSelfClosing: true,
+    selfClosingTags: true,
+    emptyAttrs: true,
+  } as any);
+
+  $("svg>*").remove();
+
+  // Add the guides
+  // A horizontal line
+  $("svg").append(
+    `
+   <line xmlns="http://www.w3.org/2000/svg" x1="0" y1="${
+     svgSchemaParsed.height / 2
+   }" x2="${svgSchemaParsed.width}" y2="${
+      svgSchemaParsed.height / 2
+    }" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"/>
+   `
+  );
+
+  // A vertical line
+  $("svg").append(
+    `
+   <line xmlns="http://www.w3.org/2000/svg" x1="${
+     svgSchemaParsed.width / 2
+   }" y1="0" x2="${svgSchemaParsed.width / 2}" y2="${
+      svgSchemaParsed.height
+    }" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"/>
+   `
+  );
+
+  const w = svgSchemaParsed.width;
+  const h = svgSchemaParsed.height;
+
+  // Box around it
+  // We use stroke-width, which will then collapse and become 2 when rendering!
+  $("svg").append(
+    `<line xmlns="http://www.w3.org/2000/svg"
+    x1="0"
+    y1="0"
+    x2="0"
+    y2="${h}"
+    style="stroke:#ddd;stroke-width:1;"/>`
+  );
+
+  $("svg").append(
+    `<line xmlns="http://www.w3.org/2000/svg"
+    x1="${w}"
+    y1="0"
+    x2="${w}"
+    y2="${h}"
+    style="stroke:#ddd;stroke-width:1;"/>`
+  );
+
+  $("svg").append(
+    `<line xmlns="http://www.w3.org/2000/svg"
+    x1="0"
+    y1="0"
+    x2="${w}"
+    y2="0"
+    style="stroke:#ddd;stroke-width:1;"/>`
+  );
+
+  $("svg").append(
+    `<line xmlns="http://www.w3.org/2000/svg"
+    x1="0"
+    y1="${h}"
+    x2="${w}"
+    y2="${h}"
+    style="stroke:#ddd;stroke-width:1;"/>`
+  );
+
+  const myStyles = "stroke:#ddd;";
+  const styles = $("svg > g").first().attr("style");
+  $("svg > g").first().attr("style", `${styles};${myStyles}`);
+
+  let s = $.html();
+  fs.writeFileSync(out, s);
+}
+
+//processFile(
+//  __dirname + "/kanjivg-r20230312/kanji/0003f.svg",
+//  "/Users/eduardo/tmp/test.svg"
+//);
+//
 const dir = path.join(__dirname, "../../public/kanji-template");
 
 fs.mkdirpSync(dir);
@@ -84,3 +246,8 @@ for (let k in index) {
 
   processFile(p, out);
 }
+
+createTemplate(
+  path.join(__dirname, "./kanjivg-r20230312/kanji/00021.svg"),
+  path.join(dir, "template.svg")
+);

@@ -6,33 +6,23 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSyncContext } from "../../pages/sync";
 
-// TODO: sync this with css
-// responsive
-const columns = {
-  9999: 15,
-  1526: 12,
-  1417: 11,
-  1308: 10,
-  1199: 9,
-  1090: 8,
-  981: 7,
-  872: 6,
-  763: 5,
-  654: 4,
-  545: 3,
-};
+// TODO: not the most optimal way
+function findDivisors(n: number) {
+  const THRESHOLD = 3;
+  const divisors = [];
 
-function getColumns(screenWidth: number) {
-  // Sort by number
-  const entries = Object.entries(columns).sort((a, b) => {
-    return parseInt(a[0], 10) - parseInt(b[0], 10);
-  });
+  for (let i = 1; i <= n; i++) {
+    const res = n % i;
+    if (res >= 0 && res <= THRESHOLD) {
+      divisors.push(i);
+    }
+  }
 
-  const found = entries.find((s) => {
-    return screenWidth < parseInt(s[0], 10);
-  });
+  return divisors;
+}
 
-  return found[1];
+function filterBetween(lower: number, higher: number, arr: number[]) {
+  return arr.filter((a) => a >= lower && a <= higher);
 }
 
 const KeyboardEventHandler = dynamic(
@@ -64,6 +54,11 @@ export default function Draw(props: { kanjis: Kanji[] }) {
   useEffect(() => {
     const setCanvasSizeFn = () => {
       if (canvasWrapRef && canvasWrapRef.current) {
+        document.documentElement.style.setProperty(
+          "--canvas-width",
+          `${canvasWrapRef.current.offsetWidth}px`
+        );
+
         setCanvasSize({
           width: canvasWrapRef.current.offsetWidth,
           height: canvasWrapRef.current.offsetHeight,
@@ -105,6 +100,20 @@ export default function Draw(props: { kanjis: Kanji[] }) {
       `${tileWidthHeight}px`
     );
   }, [tileWidthHeight]);
+
+  const divisors = filterBetween(50, 200, findDivisors(canvasSize.width));
+  console.log("all divisors without filtering", findDivisors(canvasSize.width));
+
+  useEffect(() => {
+    // TODO: set a default...
+    // In fact it should be as close as possible to the real size
+    if (canvasSize.width > 0) {
+      const median = divisors[Math.floor(divisors.length / 2)];
+      console.log("median", median);
+      console.log("all divosors of", canvasSize.width, divisors);
+      setTileWidthHeight(median);
+    }
+  }, [canvasSize.width]);
 
   return (
     <div className={styles.container}>
@@ -164,16 +173,24 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           </button>
           {tileWidthHeight}
           <button
-            onClick={() =>
-              setTileWidthHeight(Math.max(59, tileWidthHeight - 10))
-            }
+            onClick={() => {
+              // Find current size
+              const i = divisors.findIndex((a) => a === tileWidthHeight);
+              if (i > 0) {
+                setTileWidthHeight(divisors[i - 1]);
+              }
+            }}
           >
             -
           </button>
           <button
-            onClick={() =>
-              setTileWidthHeight(Math.min(149, tileWidthHeight + 10))
-            }
+            onClick={() => {
+              // Find current size
+              const i = divisors.findIndex((a) => a === tileWidthHeight);
+              if (i < divisors.length - 1) {
+                setTileWidthHeight(divisors[i + 1]);
+              }
+            }}
           >
             +
           </button>
@@ -186,15 +203,17 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           <div id="guided-template" className={styles.spriteContainer}>
             {guidedTemplate.map((item) => item)}
           </div>
-          <div id="tiles" className={styles.tiles}>
-            {typeof window !== "undefined" && assist && (
-              <Tiles
-                tileWidthHeight={tileWidthHeight}
-                word={word}
-                canvasSize={canvasSize}
-                windowWidth={window.innerWidth}
-              />
-            )}
+          <div style={{ border: "1px solid #ddd" }}>
+            <div id="tiles" className={styles.tiles}>
+              {typeof window !== "undefined" && assist && (
+                <Tiles
+                  tileWidthHeight={tileWidthHeight}
+                  word={word}
+                  canvasSize={canvasSize}
+                  windowWidth={window.innerWidth}
+                />
+              )}
+            </div>
           </div>
 
           <PracticeCanvas
@@ -281,16 +300,10 @@ function Tiles(props: {
 
   let tiles = [];
 
-  // TODO: hardcoded
-  const columns = getColumns(windowWidth);
-  const canvasArea = props.canvasSize.width * props.canvasSize.height;
-  const tileArea = tileWidthHeight * tileWidthHeight;
+  const columns = Math.floor(props.canvasSize.width / tileWidthHeight);
 
   // TODO: figure this out, since it depends on other factors
-  const tilesNum = Math.floor(canvasArea / tileArea);
-  console.log({
-    tilesNum,
-  });
+  const tilesNum = columns * 7;
   if (!tilesNum) {
     return <></>;
   }
@@ -362,7 +375,8 @@ function Tiles(props: {
               style={{
                 width: tileWidthHeight,
                 height: tileWidthHeight,
-                backgroundImage: `url(/kanji-template/ .svg)`,
+                //                backgroundImage: `url(/kanji-template/ .svg)`,
+                backgroundImage: "url(/kanji-template/template.svg)",
               }}
             ></div>
           );
