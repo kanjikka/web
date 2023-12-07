@@ -22,7 +22,6 @@ export const SvgSchema = z.object({
 
 export const KanjiSchema = z.object({
   name: z.string(),
-
   svg: SvgSchema,
 });
 

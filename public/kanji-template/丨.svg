@@ -43,4 +43,8 @@ kvg:type CDATA #IMPLIED >
 <g id="kvg:StrokeNumbers_04e28" style="font-size:8;fill:#808080">
 	
 </g>
-</svg>
+
+   <line xmlns="http://www.w3.org/2000/svg" x1="0" y1="54.5" x2="109" y2="54.5" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"/>
+   
+   <line xmlns="http://www.w3.org/2000/svg" x1="54.5" y1="0" x2="54.5" y2="109" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"/>
+   <line xmlns="http://www.w3.org/2000/svg" x1="0" y1="0" x2="0" y2="109" style="stroke:#ddd;stroke-width:1;"/><line xmlns="http://www.w3.org/2000/svg" x1="109" y1="0" x2="109" y2="109" style="stroke:#ddd;stroke-width:1;"/><line xmlns="http://www.w3.org/2000/svg" x1="0" y1="0" x2="109" y2="0" style="stroke:#ddd;stroke-width:1;"/><line xmlns="http://www.w3.org/2000/svg" x1="0" y1="109" x2="109" y2="109" style="stroke:#ddd;stroke-width:1;"/></svg>
