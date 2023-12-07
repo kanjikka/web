@@ -1,5 +1,5 @@
 import path from "path";
-import { KanjiSchema } from "../../src/models/kanji.schema";
+import { Kanji, KanjiSchema } from "../../src/models/kanji.schema";
 
 export { default } from "../../src/draw/[id]";
 import * as datastore from "../../hacks/db";
@@ -63,11 +63,34 @@ export async function getServerSideProps(context: any) {
   const chars = context.params.id.split("").filter((a) => a.trim().length);
 
   const requests = chars.map(async (a) => {
-    const res = await datastore.getCharacter(db, a);
-    return KanjiSchema.parse(res);
+    try {
+      const res = await datastore.getCharacter(db, a);
+      return KanjiSchema.parse(res);
+    } catch (e) {
+      // TODO: this messes up type inference ;/
+      return Promise.resolve(undefined);
+    }
   });
 
-  const kanjis = await Promise.all(requests);
+  // Filter out the ones that failed
+  const kanjis: Kanji[] = (await Promise.all(requests)).filter((a) => !!a);
+
+  // Redirect to the "canonical version", for example ~FOO would be redirect to FOO
+  if (kanjis.length != chars.length) {
+    const destination =
+      `/draw/` + encodeURIComponent(`${kanjis.map((a) => a.name).join()}`);
+
+    return {
+      redirect: {
+        permanent: false,
+        destination,
+      },
+    };
+  }
+
+  if (kanjis.length <= 0) {
+    throw new Error("No character available.");
+  }
 
   return {
     props: {
