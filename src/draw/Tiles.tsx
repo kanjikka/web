@@ -5,8 +5,9 @@ export function Tiles(props: {
   tileWidth: number;
   canvasWidth: number;
   windowWidth: number;
+  assistEnabled: boolean;
 }) {
-  const { word, tileWidth } = props;
+  const { assistEnabled, word, tileWidth } = props;
 
   let tiles = [];
 
@@ -14,6 +15,14 @@ export function Tiles(props: {
 
   // TODO: figure this out, since it depends on other factors
   const tilesNum = columns * 7;
+
+  function tileImg(c?: string) {
+    if (assistEnabled || !c) {
+      return "url(/kanji-template/template.svg)";
+    }
+
+    return `url(/kanji-template/${c}.svg)`;
+  }
 
   function findBorder(i: number) {
     const border = "1px solid #ddd";
@@ -42,11 +51,6 @@ export function Tiles(props: {
     return <></>;
   }
 
-  //  console.log({
-  //    canvasArea,
-  //    canvasMultiplied: props.canvasSize.width * props.canvasSize.height,
-  //  });
-
   if (word.length === 1) {
     // Single kanji is easy, just fill everything
     const c = word[0];
@@ -60,7 +64,7 @@ export function Tiles(props: {
               className={styles.tile}
               style={{
                 ...findBorder(a),
-                backgroundImage: `url(/kanji-template/${c}.svg)`,
+                backgroundImage: tileImg(c),
               }}
             />
           );
@@ -86,7 +90,7 @@ export function Tiles(props: {
             ...findBorder(i),
             width: tileWidth,
             height: tileWidth,
-            backgroundImage: `url(/kanji-template/${c}.svg)`,
+            backgroundImage: tileImg(c),
           }}
         ></div>
       );
@@ -112,8 +116,7 @@ export function Tiles(props: {
                 ...findBorder(i),
                 width: tileWidth,
                 height: tileWidth,
-                //                backgroundImage: `url(/kanji-template/ .svg)`,
-                backgroundImage: "url(/kanji-template/template.svg)",
+                backgroundImage: tileImg(),
               }}
             ></div>
           );
@@ -133,7 +136,7 @@ export function Tiles(props: {
           ...findBorder(i),
           width: tileWidth,
           height: tileWidth,
-          backgroundImage: `url(/kanji-template/${c}.svg)`,
+          backgroundImage: tileImg(c),
         }}
       ></div>
     );

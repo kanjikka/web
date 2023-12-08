@@ -68,10 +68,11 @@ export default function Draw(props: { kanjis: Kanji[] }) {
         <div ref={canvasWrapRef} className={styles.canvasContainer}>
           <div>
             <div id="tiles" className={styles.tiles}>
-              {typeof window !== "undefined" && assist && (
+              {typeof window !== "undefined" && (
                 <Tiles
                   tileWidth={tileWidth}
                   word={word}
+                  assistEnabled={assist}
                   canvasWidth={canvasWidth}
                   windowWidth={window.innerWidth}
                 />
