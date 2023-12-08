@@ -13,7 +13,10 @@ export function ExampleSentences(props: { sentences: ExampleSentence[] }) {
         <h4 style={{ display: "inline-block" }}>Example Sentences</h4>
       </summary>
       {props.sentences.map((s) => (
-        <div className={styles.exampleSentenceContainer}>
+        <div
+          key={s.japaneseSentence}
+          className={styles.exampleSentenceContainer}
+        >
           <ExampleSentenceComp sentence={s} />
         </div>
       ))}

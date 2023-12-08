@@ -11,6 +11,7 @@ async function run() {
   const db = await datastore.open();
   await datastore.migrate(db);
 
+  // TODO: skip those that don't have all items
   for (let i = 0; i < data.length; i++) {
     datastore.insertExampleSentence(db, {
       source: data[i].source,
