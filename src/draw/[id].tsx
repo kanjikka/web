@@ -81,12 +81,15 @@ export default function Draw(props: { kanjis: Kanji[] }) {
           </div>
 
           <KeyboardHandler canvasRef={canvasRef} />
+          {/*
           <PracticeCanvas
+            canvasID="canvas"
             forwardRef={canvasRef}
             width={canvasWidth}
             height={canvasHeight}
             className={styles.canvas}
           ></PracticeCanvas>
+            */}
         </div>
       </div>
     </div>

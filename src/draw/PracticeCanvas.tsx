@@ -14,12 +14,13 @@ import { useHistory } from "./history";
 import { IEvent } from "fabric/fabric-impl";
 
 // eh, should be unique enough
-const CANVAS_ID = "drawing-canvas";
+//const CANVAS_ID = "drawing-canvas";
 
 type PracticeCanvasProps = {
   width: number;
   height: number;
   className?: string;
+  canvasID: string;
 };
 
 export default function PCanvas({
@@ -33,6 +34,7 @@ export type PracticeCanvasHandle = {
   undo: () => void;
   redo: () => void;
   clear: () => void;
+  setZoom: (n) => void;
 };
 
 // https://stackoverflow.com/a/62258685
@@ -62,20 +64,30 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
   // for example, pressing ctrl+z while drawing
   // here we prefer to just ignore the event
   useImperativeHandle(ref, () => ({
+    setZoom: (n) => {
+      console.log("setting zoom to", n);
+      canvas.current.setZoom(n);
+    },
     undo: () => {
-      if (!locked && !isDrawing) {
-        history.undo();
-      }
+      console.log("zoom", canvas.current.getZoom());
+      canvas.current.setZoom(2);
+      //      if (!locked && !isDrawing) {
+      //        history.undo();
+      //      }
     },
     redo: () => {
-      if (!locked && !isDrawing) {
-        history.redo();
-      }
+      console.log("zoom", canvas.current.getZoom());
+      canvas.current.setZoom(2);
+      //if (!locked && !isDrawing) {
+      //  history.redo();
+      //}
     },
     clear: () => {
-      if (!locked && !isDrawing) {
-        history.clear();
-      }
+      console.log("zoom", canvas.current.getZoom());
+      canvas.current.setZoom(2);
+      //if (!locked && !isDrawing) {
+      //  history.clear();
+      //}
     },
   }));
 
@@ -121,7 +133,7 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
   }, [history.present]);
 
   useEffect(() => {
-    const c = new fabric.Canvas(CANVAS_ID, {
+    const c = new fabric.Canvas(props.canvasID, {
       isDrawingMode: true,
       width: props.width,
       height: props.height,
@@ -159,7 +171,7 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
 
   return (
     <div className={props.className}>
-      <canvas id={CANVAS_ID}></canvas>
+      <canvas id={props.canvasID}></canvas>
     </div>
   );
 };

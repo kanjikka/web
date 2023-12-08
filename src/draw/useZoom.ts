@@ -60,6 +60,13 @@ export function useZoom(props: ZoomProps) {
 
   const zoomIn = () => {
     if (canZoomIn) {
+      const newTileWidth = divisors[currentIndex + 1];
+      const currentTileWidth = divisors[currentIndex];
+      console.log({
+        newTileWidth,
+        currentTileWidth,
+        division: newTileWidth / currentTileWidth,
+      });
       setTileWidthHeight(divisors[currentIndex + 1]);
     }
   };

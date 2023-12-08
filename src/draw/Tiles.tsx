@@ -1,4 +1,10 @@
 import styles from "./Tiles.module.css";
+import dynamic from "next/dynamic";
+import React, { useEffect, useRef, useState } from "react";
+
+const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
+  ssr: false,
+});
 
 export function Tiles(props: {
   word: string;
@@ -14,7 +20,8 @@ export function Tiles(props: {
   const columns = Math.floor(props.canvasWidth / tileWidth);
 
   // TODO: figure this out, since it depends on other factors
-  const tilesNum = columns * 7;
+  //const tilesNum = columns * 7;
+  const tilesNum = 1;
 
   function tileImg(c?: string) {
     if (assistEnabled || !c) {
@@ -51,6 +58,9 @@ export function Tiles(props: {
     return <></>;
   }
 
+  const canvasRef = useRef(null);
+  const canvasWrapRef = useRef(null);
+
   if (word.length === 1) {
     // Single kanji is easy, just fill everything
     const c = word[0];
@@ -66,7 +76,22 @@ export function Tiles(props: {
                 ...findBorder(a),
                 backgroundImage: tileImg(c),
               }}
-            />
+            >
+              <button
+                style={{ position: "absolute", zIndex: 999 }}
+                onClick={() => {
+                  canvasRef.current.setZoom(1.21);
+                }}
+              >
+                Test
+              </button>
+              <PracticeCanvas
+                canvasID={"canvas-" + a.toString()}
+                forwardRef={canvasRef}
+                width={tileWidth}
+                height={tileWidth}
+              ></PracticeCanvas>
+            </div>
           );
         })}
       </>
