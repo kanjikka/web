@@ -12,12 +12,17 @@ import { KeyboardHandler } from "./Keyboard";
 import { Toolbar } from "./Toolbar";
 import { useZoom } from "./useZoom";
 import { useCanvasObserver } from "./useCanvasObserver";
+import { ExampleSentence } from "../models/exampleSentence.schema";
+import { ExampleSentences } from "./ExampleSentence";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
 });
 
-export default function Draw(props: { kanjis: Kanji[] }) {
+export default function Draw(props: {
+  kanjis: Kanji[];
+  exampleSentences: ExampleSentence[];
+}) {
   const router = useRouter();
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
@@ -47,8 +52,15 @@ export default function Draw(props: { kanjis: Kanji[] }) {
         <Title characters={props.kanjis} />
       </div>
       <div className={styles.reference}>
-        <h4>Tutorial:</h4>
-        <Tutorial characters={props.kanjis} />
+        <details>
+          <summary>
+            <h4 style={{ display: "inline-block" }}>Tutorial:</h4>
+          </summary>
+
+          <Tutorial characters={props.kanjis} />
+        </details>
+
+        <ExampleSentences sentences={props.exampleSentences} />
       </div>
       <div>
         <h4>Practice:</h4>

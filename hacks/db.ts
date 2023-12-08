@@ -1,7 +1,12 @@
 import path from "path";
 import * as sqlite from "sqlite";
 import sqlite3 from "sqlite3";
+import { z } from "zod";
 import { SvgSchema } from "../src/models/kanji.schema";
+import {
+  ExampleSentence,
+  ExampleSentenceSchema,
+} from "../src/models/exampleSentence.schema";
 
 // TODO
 // pool?
@@ -115,4 +120,27 @@ export async function getCharacter(db: sqlite.Database, name: string) {
     jisho: JSON.parse(res.jishoBody),
     svg: SvgSchema.parse(JSON.parse(res.svgBody)),
   };
+}
+
+export function insertExampleSentence(
+  db: sqlite.Database,
+  es: ExampleSentence
+) {
+  return db.run(
+    `INSERT or REPLACE INTO EXAMPLE_SENTENCES (source, audio_japanese, japanese, english)
+          VALUES (?, ?, ?, ?)`,
+    es.source,
+    es.audioJapanese,
+    es.japaneseSentence,
+    es.englishSentence
+  );
+}
+
+export async function searchExampleSentence(db: sqlite.Database, word: string) {
+  const res = await db.all(
+    `SELECT * FROM EXAMPLE_SENTENCES WHERE japanese LIKE ? AND LENGTH(english) > 0 LIMIT 10`,
+    `%${word}%`
+  );
+
+  return z.array(ExampleSentenceSchema).parse(res);
 }
