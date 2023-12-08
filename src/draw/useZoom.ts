@@ -31,7 +31,11 @@ export function useZoom(props: ZoomProps) {
   // Since we will add borders to the first and last item
   // They also needed to be accounted for
   const canvasSizeWidth = canvasWidth - 2;
-  const divisors = filterBetween(50, 200, findDivisors(canvasSizeWidth));
+  const divisors = filterBetween(
+    LOWER_BOUNDARY,
+    UPPER_BOUNDARY,
+    findDivisors(canvasSizeWidth)
+  );
 
   // Set a default, which right now is the median
   // We should do something more smart about it...
@@ -61,7 +65,6 @@ export function useZoom(props: ZoomProps) {
   };
 
   useEffect(() => {
-    console.log("changed tilewidth", tileWidthHeight);
     document.documentElement.style.setProperty(
       "--tile-width",
       `${tileWidthHeight}px`
