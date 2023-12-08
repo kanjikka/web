@@ -92,8 +92,12 @@ export async function getServerSideProps(context: any) {
     throw new Error("No character available.");
   }
 
+  // TODO: do this concurrently?
+  const exampleSentences = await datastore.searchExampleSentence(db, chars);
+
   return {
     props: {
+      exampleSentences,
       kanjis,
     },
   };
