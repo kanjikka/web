@@ -1,7 +1,20 @@
 import { Kanji } from "../models/kanji.schema";
 import Link from "next/link";
+import { ExampleSentence } from "../models/exampleSentence.schema";
 
-export function Title(props: { characters: Kanji[] }) {
+export function Title(props: {
+  characters: Kanji[];
+  sentence: ExampleSentence;
+}) {
+  if (props.sentence) {
+    return (
+      <>
+        <h1>{props.sentence.japaneseSentence}</h1>
+        <h2>{props.sentence.englishSentence}</h2>
+      </>
+    );
+  }
+
   return (
     <h1>
       {props.characters.map((c, i) => {

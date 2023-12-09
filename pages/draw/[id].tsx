@@ -93,10 +93,26 @@ export async function getServerSideProps(context: any) {
   }
 
   // TODO: do this concurrently?
-  const exampleSentences = await datastore.searchExampleSentence(db, chars);
+  let exampleSentences = await datastore.searchExampleSentence(
+    db,
+    chars.join("")
+  );
+
+  let sentence: typeof exampleSentences[number] = null;
+
+  // There's only one sentence, itself
+  // So there's no need to show itself as an "example sentence"
+  if (
+    exampleSentences.length === 1 &&
+    exampleSentences[0].japaneseSentence === chars.join("")
+  ) {
+    sentence = exampleSentences[0];
+    exampleSentences = [];
+  }
 
   return {
     props: {
+      sentence,
       exampleSentences,
       kanjis,
     },

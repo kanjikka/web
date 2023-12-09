@@ -137,6 +137,7 @@ export function insertExampleSentence(
 }
 
 export async function searchExampleSentence(db: sqlite.Database, word: string) {
+  console.log("finding example sentence", word);
   const res = await db.all(
     `SELECT * FROM EXAMPLE_SENTENCES WHERE japanese LIKE ? AND LENGTH(english) > 0 LIMIT 10`,
     `%${word}%`

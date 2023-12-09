@@ -22,6 +22,7 @@ const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
 export default function Draw(props: {
   kanjis: Kanji[];
   exampleSentences: ExampleSentence[];
+  sentence?: ExampleSentence;
 }) {
   const router = useRouter();
   const canvasRef = useRef(null);
@@ -49,7 +50,7 @@ export default function Draw(props: {
       <Link href="/">Go to home page</Link>
 
       <div className={styles.title}>
-        <Title characters={props.kanjis} />
+        <Title characters={props.kanjis} sentence={props.sentence} />
       </div>
       <div className={styles.reference}>
         <details>
