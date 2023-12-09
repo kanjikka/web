@@ -67,6 +67,7 @@ export async function getServerSideProps(context: any) {
       const res = await datastore.getCharacter(db, a);
       return KanjiSchema.parse(res);
     } catch (e) {
+      console.error("error", e);
       // TODO: this messes up type inference ;/
       return Promise.resolve(undefined);
     }
