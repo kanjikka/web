@@ -23,6 +23,12 @@ export const SvgSchema = z.object({
 export const KanjiSchema = z.object({
   name: z.string(),
   svg: SvgSchema,
+
+  jisho: z
+    .object({
+      meaning: z.string().optional(),
+    })
+    .optional(),
 });
 
 export type Svg = ReturnType<typeof SvgSchema.parse>;

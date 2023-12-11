@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "hack": "ts-node --project hacks/tsconfig.json",
-    "hacks:generate-from-kanjivg": "npm run hack -- hacks/generate-from-kanjivg/script.ts"
+    "hacks:generate-from-kanjivg": "npm run hack -- hacks/generate-from-kanjivg/script.ts",
+    "hacks:example-sentences": "npm run hack -- hacks/example-sentence/script.ts"
   },
   "dependencies": {
     "@arch-inc/fabricjs-psbrush": "0.0.17",
