@@ -79,7 +79,12 @@ export default function Draw(props: {
 
         <Toolbar
           onClear={() => {
-            tilesRef.current.forEach((r) => r.clear());
+            // TODO: figure out why r is sometimes null
+            tilesRef.current.forEach((r, i) => {
+              if (r) {
+                r.clear();
+              }
+            });
           }}
           canvasRef={canvasRef}
           toggleAssist={() => setAssist((prevAssist) => !prevAssist)}

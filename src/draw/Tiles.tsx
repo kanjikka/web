@@ -26,7 +26,6 @@ export const Tiles = forwardRef(function (
   // TODO: type
   ref: MutableRefObject<any[]>
 ) {
-  //  const tilesCanvasRef = useRef([]);
   const { assistEnabled, word, tileWidth, zoomLevel } = props;
 
   let tiles = [];
@@ -34,8 +33,8 @@ export const Tiles = forwardRef(function (
   const columns = Math.floor(props.canvasWidth / tileWidth);
 
   // TODO: figure this out, since it depends on other factors
-  //const tilesNum = columns * 7;
-  const tilesNum = 1;
+  const tilesNum = columns * 7;
+  //const tilesNum = 1;
 
   function tileImg(c?: string) {
     if (!assistEnabled || !c) {
@@ -75,9 +74,6 @@ export const Tiles = forwardRef(function (
   if (!ref) {
     return <></>;
   }
-
-  const canvasRef = useRef(null);
-  const canvasWrapRef = useRef(null);
 
   if (word.length === 1) {
     // Single kanji is easy, just fill everything
@@ -130,7 +126,17 @@ export const Tiles = forwardRef(function (
             height: tileWidth,
             backgroundImage: tileImg(c),
           }}
-        ></div>
+        >
+          <PracticeCanvas
+            canvasID={"canvas-" + i.toString()}
+            forwardRef={(r) => {
+              ref.current[i] = r;
+            }}
+            width={tileWidth}
+            height={tileWidth}
+            zoomLevel={zoomLevel}
+          ></PracticeCanvas>
+        </div>
       );
       i++;
       wordPointer = (wordPointer + 1) % word.length;
@@ -156,7 +162,17 @@ export const Tiles = forwardRef(function (
                 height: tileWidth,
                 backgroundImage: tileImg(),
               }}
-            ></div>
+            >
+              <PracticeCanvas
+                canvasID={"canvas-" + i.toString()}
+                forwardRef={(r) => {
+                  ref.current[i] = r;
+                }}
+                width={tileWidth}
+                height={tileWidth}
+                zoomLevel={zoomLevel}
+              ></PracticeCanvas>
+            </div>
           );
           i++;
           // }
@@ -176,7 +192,17 @@ export const Tiles = forwardRef(function (
           height: tileWidth,
           backgroundImage: tileImg(c),
         }}
-      ></div>
+      >
+        <PracticeCanvas
+          canvasID={"canvas-" + i.toString()}
+          forwardRef={(r) => {
+            ref.current[i] = r;
+          }}
+          width={tileWidth}
+          height={tileWidth}
+          zoomLevel={zoomLevel}
+        ></PracticeCanvas>
+      </div>
     );
     i++;
     wordPointer = (wordPointer + 1) % word.length;
