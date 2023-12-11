@@ -14,6 +14,7 @@ import { useZoom } from "./useZoom";
 import { useCanvasObserver } from "./useCanvasObserver";
 import { ExampleSentence } from "../models/exampleSentence.schema";
 import { ExampleSentences } from "./ExampleSentence";
+import Search from "../search/search";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
@@ -48,6 +49,10 @@ export default function Draw(props: {
       {/* More strict logic to go back to the main page if there's nothing in history */}
       <button onClick={() => router.back()}>Go Back</button>
       <Link href="/">Go to home page</Link>
+
+      <div>
+        <Search available={[]} />
+      </div>
 
       <div className={styles.title}>
         <Title characters={props.kanjis} sentence={props.sentence} />

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 function getFullPath(src: string) {
   return `/audio-files/${src}`;
 }
-export function PlayButton(props: { src: string; controls: boolean }) {
+export function PlayButton(props: { src: string; controls?: boolean }) {
   const { src, controls } = props;
   const audioRef = useRef<HTMLAudioElement>(null);
   const [audioPlaying, setAudioPlaying] = useState(false);
