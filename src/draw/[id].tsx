@@ -35,9 +35,10 @@ export default function Draw(props: {
   const [assist, setAssist] = useState(true);
   const word = props.kanjis.map((a) => a.name).join("");
   const { syncConfig, toggleLocked } = useSyncContext();
-  const { tileWidth, zoomIn, zoomOut, canZoomIn, canZoomOut } = useZoom({
-    canvasWidth,
-  });
+  const { tileWidth, zoomIn, zoomOut, canZoomIn, canZoomOut, zoomLevel } =
+    useZoom({
+      canvasWidth,
+    });
 
   // Clear canvas when word changes
   useEffect(() => {
@@ -88,6 +89,7 @@ export default function Draw(props: {
             <div id="tiles" className={styles.tiles}>
               {typeof window !== "undefined" && (
                 <Tiles
+                  zoomLevel={zoomLevel}
                   tileWidth={tileWidth}
                   word={word}
                   assistEnabled={assist}

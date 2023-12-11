@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 
+const DEFAULT_TILE_WIDTH = 109;
 const LOWER_BOUNDARY = 50;
 const UPPER_BOUNDARY = 200;
 
@@ -26,7 +27,9 @@ type ZoomProps = {
   canvasWidth: number;
 };
 export function useZoom(props: ZoomProps) {
-  const [tileWidthHeight, setTileWidthHeight] = useState(109);
+  const [tileWidthHeight, setTileWidthHeight] = useState(DEFAULT_TILE_WIDTH);
+  const [zoomLevel, setZoomLevel] = useState(1);
+
   const { canvasWidth } = props;
   // Since we will add borders to the first and last item
   // They also needed to be accounted for
@@ -54,20 +57,19 @@ export function useZoom(props: ZoomProps) {
 
   const zoomOut = () => {
     if (canZoomOut) {
-      setTileWidthHeight(divisors[currentIndex - 1]);
+      const newTileWidth = divisors[currentIndex - 1];
+
+      setZoomLevel(newTileWidth / DEFAULT_TILE_WIDTH);
+      setTileWidthHeight(newTileWidth);
     }
   };
 
   const zoomIn = () => {
     if (canZoomIn) {
       const newTileWidth = divisors[currentIndex + 1];
-      const currentTileWidth = divisors[currentIndex];
-      console.log({
-        newTileWidth,
-        currentTileWidth,
-        division: newTileWidth / currentTileWidth,
-      });
-      setTileWidthHeight(divisors[currentIndex + 1]);
+
+      setZoomLevel(newTileWidth / DEFAULT_TILE_WIDTH);
+      setTileWidthHeight(newTileWidth);
     }
   };
 
@@ -83,6 +85,7 @@ export function useZoom(props: ZoomProps) {
   }, [tileWidthHeight]);
 
   return {
+    zoomLevel,
     tileWidth: tileWidthHeight,
     zoomIn,
     zoomOut,

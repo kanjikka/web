@@ -21,6 +21,7 @@ type PracticeCanvasProps = {
   height: number;
   className?: string;
   canvasID: string;
+  zoomLevel?: number;
 };
 
 export default function PCanvas({
@@ -34,7 +35,6 @@ export type PracticeCanvasHandle = {
   undo: () => void;
   redo: () => void;
   clear: () => void;
-  setZoom: (n) => void;
 };
 
 // https://stackoverflow.com/a/62258685
@@ -45,6 +45,7 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
   const canvas = useRef<fabric.Canvas>();
   const [isDrawing, setIsDrawing] = useState(false);
   const [locked, setLocked] = useState(false);
+  const { zoomLevel } = props;
 
   // TODO
   // load from local storage or something
@@ -64,30 +65,20 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
   // for example, pressing ctrl+z while drawing
   // here we prefer to just ignore the event
   useImperativeHandle(ref, () => ({
-    setZoom: (n) => {
-      console.log("setting zoom to", n);
-      canvas.current.setZoom(n);
-    },
     undo: () => {
-      console.log("zoom", canvas.current.getZoom());
-      canvas.current.setZoom(2);
-      //      if (!locked && !isDrawing) {
-      //        history.undo();
-      //      }
+      if (!locked && !isDrawing) {
+        history.undo();
+      }
     },
     redo: () => {
-      console.log("zoom", canvas.current.getZoom());
-      canvas.current.setZoom(2);
-      //if (!locked && !isDrawing) {
-      //  history.redo();
-      //}
+      if (!locked && !isDrawing) {
+        history.redo();
+      }
     },
     clear: () => {
-      console.log("zoom", canvas.current.getZoom());
-      canvas.current.setZoom(2);
-      //if (!locked && !isDrawing) {
-      //  history.clear();
-      //}
+      if (!locked && !isDrawing) {
+        history.clear();
+      }
     },
   }));
 
@@ -131,6 +122,15 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
       setLocked(false);
     });
   }, [history.present]);
+
+  useEffect(() => {
+    if (!canvas || !canvas.current) {
+      return;
+    }
+
+    console.log("setting zoom to", zoomLevel);
+    canvas.current.setZoom(zoomLevel);
+  }, [zoomLevel]);
 
   useEffect(() => {
     const c = new fabric.Canvas(props.canvasID, {

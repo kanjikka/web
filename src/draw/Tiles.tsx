@@ -1,6 +1,7 @@
 import styles from "./Tiles.module.css";
 import dynamic from "next/dynamic";
 import React, { useEffect, useRef, useState } from "react";
+import { useZoom } from "./useZoom";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
@@ -12,8 +13,9 @@ export function Tiles(props: {
   canvasWidth: number;
   windowWidth: number;
   assistEnabled: boolean;
+  zoomLevel: number;
 }) {
-  const { assistEnabled, word, tileWidth } = props;
+  const { assistEnabled, word, tileWidth, zoomLevel } = props;
 
   let tiles = [];
 
@@ -31,7 +33,7 @@ export function Tiles(props: {
     return `url(/kanji-template/${c}.svg)`;
   }
 
-  function findBorder(i: number) {
+  function figureOutBorder(i: number) {
     const border = "1px solid #ddd";
     const styles: React.CSSProperties = {};
 
@@ -73,7 +75,7 @@ export function Tiles(props: {
               key={a}
               className={styles.tile}
               style={{
-                ...findBorder(a),
+                ...figureOutBorder(a),
                 backgroundImage: tileImg(c),
               }}
             >
@@ -90,6 +92,7 @@ export function Tiles(props: {
                 forwardRef={canvasRef}
                 width={tileWidth}
                 height={tileWidth}
+                zoomLevel={zoomLevel}
               ></PracticeCanvas>
             </div>
           );
@@ -112,7 +115,7 @@ export function Tiles(props: {
           key={i}
           className={styles.tile}
           style={{
-            ...findBorder(i),
+            ...figureOutBorder(i),
             width: tileWidth,
             height: tileWidth,
             backgroundImage: tileImg(c),
@@ -138,7 +141,7 @@ export function Tiles(props: {
               key={`${i}-${j}`}
               className={styles.tile}
               style={{
-                ...findBorder(i),
+                ...figureOutBorder(i),
                 width: tileWidth,
                 height: tileWidth,
                 backgroundImage: tileImg(),
@@ -158,7 +161,7 @@ export function Tiles(props: {
         key={i}
         className={styles.tile}
         style={{
-          ...findBorder(i),
+          ...figureOutBorder(i),
           width: tileWidth,
           height: tileWidth,
           backgroundImage: tileImg(c),
