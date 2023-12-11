@@ -53,6 +53,8 @@ function isLowerCaseLatin(str) {
 //  };
 //}
 export async function getServerSideProps(context: any) {
+  console.log("context.params.id", context.params.id);
+
   // https://github.com/vercel/next.js/issues/10943
   const pagesDirectory = path.resolve(process.cwd(), "pages");
   const db = await datastore.open(
@@ -99,21 +101,20 @@ export async function getServerSideProps(context: any) {
     chars.join("")
   );
 
-  let sentence: typeof exampleSentences[number] = null;
+  // If one of the sentences is itself, let's use its audio etc
+  const sentence = exampleSentences.find(
+    (a) => a.japaneseSentence === chars.join("")
+  );
 
-  // There's only one sentence, itself
-  // So there's no need to show itself as an "example sentence"
-  if (
-    exampleSentences.length === 1 &&
-    exampleSentences[0].japaneseSentence === chars.join("")
-  ) {
-    sentence = exampleSentences[0];
-    exampleSentences = [];
-  }
+  // Filter itself from example sentences, since it's redundant
+  exampleSentences = exampleSentences.filter(
+    (a) => a.japaneseSentence !== chars.join("")
+  );
 
   return {
     props: {
-      sentence,
+      // Stupid next fails if we pass undefined lol
+      sentence: sentence ? sentence : null,
       exampleSentences,
       kanjis,
     },

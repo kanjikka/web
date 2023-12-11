@@ -1,15 +1,26 @@
 import { Kanji } from "../models/kanji.schema";
 import Link from "next/link";
 import { ExampleSentence } from "../models/exampleSentence.schema";
+import { useEffect, useRef } from "react";
+import { PlayButton } from "./PlayButton";
 
 export function Title(props: {
   characters: Kanji[];
   sentence: ExampleSentence;
 }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {}, [audioRef.current?.pause]);
+
   if (props.sentence) {
     return (
       <>
-        <h1>{props.sentence.japaneseSentence}</h1>
+        <h1>
+          {props.sentence.japaneseSentence}
+          <span>
+            <PlayButton src={props.sentence.audioJapanese} />
+          </span>
+        </h1>
         <h2>{props.sentence.englishSentence}</h2>
       </>
     );
