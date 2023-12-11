@@ -165,10 +165,6 @@ export default function Search(props: SearchProps) {
           if (!c.target.value.trim()) {
             return;
           }
-          setErrorMessage(
-            inputRef.current,
-            decide(c.target.value.trim(), props.available)
-          );
         }}
       />
     </form>

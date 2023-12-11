@@ -12,12 +12,19 @@ import { KeyboardHandler } from "./Keyboard";
 import { Toolbar } from "./Toolbar";
 import { useZoom } from "./useZoom";
 import { useCanvasObserver } from "./useCanvasObserver";
+import { ExampleSentence } from "../models/exampleSentence.schema";
+import { ExampleSentences } from "./ExampleSentence";
+import Search from "../search/search";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
 });
 
-export default function Draw(props: { kanjis: Kanji[] }) {
+export default function Draw(props: {
+  kanjis: Kanji[];
+  exampleSentences: ExampleSentence[];
+  sentence?: ExampleSentence;
+}) {
   const router = useRouter();
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
@@ -43,12 +50,23 @@ export default function Draw(props: { kanjis: Kanji[] }) {
       <button onClick={() => router.back()}>Go Back</button>
       <Link href="/">Go to home page</Link>
 
+      <div>
+        <Search available={[]} />
+      </div>
+
       <div className={styles.title}>
-        <Title characters={props.kanjis} />
+        <Title characters={props.kanjis} sentence={props.sentence} />
       </div>
       <div className={styles.reference}>
-        <h4>Tutorial:</h4>
-        <Tutorial characters={props.kanjis} />
+        <details>
+          <summary>
+            <h4 style={{ display: "inline-block" }}>Tutorial:</h4>
+          </summary>
+
+          <Tutorial characters={props.kanjis} />
+        </details>
+
+        <ExampleSentences sentences={props.exampleSentences} />
       </div>
       <div>
         <h4>Practice:</h4>

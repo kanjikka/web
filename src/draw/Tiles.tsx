@@ -17,7 +17,7 @@ export function Tiles(props: {
   const tilesNum = columns * 7;
 
   function tileImg(c?: string) {
-    if (assistEnabled || !c) {
+    if (!assistEnabled || !c) {
       return "url(/kanji-template/template.svg)";
     }
 
