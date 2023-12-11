@@ -1,20 +1,32 @@
 import styles from "./Tiles.module.css";
 import dynamic from "next/dynamic";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  ForwardedRef,
+  forwardRef,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useZoom } from "./useZoom";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
 });
 
-export function Tiles(props: {
-  word: string;
-  tileWidth: number;
-  canvasWidth: number;
-  windowWidth: number;
-  assistEnabled: boolean;
-  zoomLevel: number;
-}) {
+export const Tiles = forwardRef(function (
+  props: {
+    word: string;
+    tileWidth: number;
+    canvasWidth: number;
+    windowWidth: number;
+    assistEnabled: boolean;
+    zoomLevel: number;
+  },
+  // TODO: type
+  ref: MutableRefObject<any[]>
+) {
+  //  const tilesCanvasRef = useRef([]);
   const { assistEnabled, word, tileWidth, zoomLevel } = props;
 
   let tiles = [];
@@ -60,6 +72,10 @@ export function Tiles(props: {
     return <></>;
   }
 
+  if (!ref) {
+    return <></>;
+  }
+
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
 
@@ -69,27 +85,21 @@ export function Tiles(props: {
 
     return (
       <>
-        {Array.from(Array(tilesNum).keys()).map((a) => {
+        {Array.from(Array(tilesNum).keys()).map((i) => {
           return (
             <div
-              key={a}
+              key={i}
               className={styles.tile}
               style={{
-                ...figureOutBorder(a),
+                ...figureOutBorder(i),
                 backgroundImage: tileImg(c),
               }}
             >
-              <button
-                style={{ position: "absolute", zIndex: 999 }}
-                onClick={() => {
-                  canvasRef.current.setZoom(1.21);
-                }}
-              >
-                Test
-              </button>
               <PracticeCanvas
-                canvasID={"canvas-" + a.toString()}
-                forwardRef={canvasRef}
+                canvasID={"canvas-" + i.toString()}
+                forwardRef={(r) => {
+                  ref.current[i] = r;
+                }}
                 width={tileWidth}
                 height={tileWidth}
                 zoomLevel={zoomLevel}
@@ -173,4 +183,4 @@ export function Tiles(props: {
   }
 
   return <>{tiles}</>;
-}
+});

@@ -25,6 +25,7 @@ export default function Draw(props: {
   exampleSentences: ExampleSentence[];
   sentence?: ExampleSentence;
 }) {
+  const tilesRef = useRef([]);
   const router = useRouter();
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
@@ -42,8 +43,12 @@ export default function Draw(props: {
 
   // Clear canvas when word changes
   useEffect(() => {
-    canvasRef.current?.clear();
+    // canvasRef.current?.clear();
   }, [word]);
+
+  useEffect(() => {
+    console.log("tilesRef", tilesRef);
+  }, [tilesRef.current]);
 
   return (
     <div className={styles.container}>
@@ -73,6 +78,9 @@ export default function Draw(props: {
         <h4>Practice:</h4>
 
         <Toolbar
+          onClear={() => {
+            tilesRef.current.forEach((r) => r.clear());
+          }}
           canvasRef={canvasRef}
           toggleAssist={() => setAssist((prevAssist) => !prevAssist)}
           sync={() => sendToOtherDevices(word)}
@@ -89,6 +97,7 @@ export default function Draw(props: {
             <div id="tiles" className={styles.tiles}>
               {typeof window !== "undefined" && (
                 <Tiles
+                  ref={tilesRef}
                   zoomLevel={zoomLevel}
                   tileWidth={tileWidth}
                   word={word}

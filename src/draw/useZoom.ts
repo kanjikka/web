@@ -28,6 +28,7 @@ type ZoomProps = {
 };
 export function useZoom(props: ZoomProps) {
   const [tileWidthHeight, setTileWidthHeight] = useState(DEFAULT_TILE_WIDTH);
+  const [initialTileWidth, setInitialTileWidth] = useState(DEFAULT_TILE_WIDTH);
   const [zoomLevel, setZoomLevel] = useState(1);
 
   const { canvasWidth } = props;
@@ -47,6 +48,7 @@ export function useZoom(props: ZoomProps) {
     // In fact it should be as close as possible to the real size
     if (canvasWidth > 0) {
       const median = divisors[Math.floor(divisors.length / 2)];
+      setInitialTileWidth(median);
       setTileWidthHeight(median);
     }
   }, [canvasWidth]);
@@ -59,7 +61,7 @@ export function useZoom(props: ZoomProps) {
     if (canZoomOut) {
       const newTileWidth = divisors[currentIndex - 1];
 
-      setZoomLevel(newTileWidth / DEFAULT_TILE_WIDTH);
+      setZoomLevel(newTileWidth / initialTileWidth);
       setTileWidthHeight(newTileWidth);
     }
   };
@@ -68,7 +70,7 @@ export function useZoom(props: ZoomProps) {
     if (canZoomIn) {
       const newTileWidth = divisors[currentIndex + 1];
 
-      setZoomLevel(newTileWidth / DEFAULT_TILE_WIDTH);
+      setZoomLevel(newTileWidth / initialTileWidth);
       setTileWidthHeight(newTileWidth);
     }
   };
