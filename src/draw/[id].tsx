@@ -14,6 +14,7 @@ import { useZoom } from "./useZoom";
 import { useCanvasObserver } from "./useCanvasObserver";
 import { ExampleSentence } from "../models/exampleSentence.schema";
 import { ExampleSentences } from "./ExampleSentence";
+import Search from "../search/search";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
@@ -22,6 +23,7 @@ const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
 export default function Draw(props: {
   kanjis: Kanji[];
   exampleSentences: ExampleSentence[];
+  sentence?: ExampleSentence;
 }) {
   const router = useRouter();
   const canvasRef = useRef(null);
@@ -48,8 +50,12 @@ export default function Draw(props: {
       <button onClick={() => router.back()}>Go Back</button>
       <Link href="/">Go to home page</Link>
 
+      <div>
+        <Search available={[]} />
+      </div>
+
       <div className={styles.title}>
-        <Title characters={props.kanjis} />
+        <Title characters={props.kanjis} sentence={props.sentence} />
       </div>
       <div className={styles.reference}>
         <details>

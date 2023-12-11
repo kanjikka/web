@@ -53,6 +53,8 @@ function isLowerCaseLatin(str) {
 //  };
 //}
 export async function getServerSideProps(context: any) {
+  console.log("context.params.id", context.params.id);
+
   // https://github.com/vercel/next.js/issues/10943
   const pagesDirectory = path.resolve(process.cwd(), "pages");
   const db = await datastore.open(
@@ -67,6 +69,7 @@ export async function getServerSideProps(context: any) {
       const res = await datastore.getCharacter(db, a);
       return KanjiSchema.parse(res);
     } catch (e) {
+      console.error("error", e);
       // TODO: this messes up type inference ;/
       return Promise.resolve(undefined);
     }
@@ -93,10 +96,25 @@ export async function getServerSideProps(context: any) {
   }
 
   // TODO: do this concurrently?
-  const exampleSentences = await datastore.searchExampleSentence(db, chars);
+  let exampleSentences = await datastore.searchExampleSentence(
+    db,
+    chars.join("")
+  );
+
+  // If one of the sentences is itself, let's use its audio etc
+  const sentence = exampleSentences.find(
+    (a) => a.japaneseSentence === chars.join("")
+  );
+
+  // Filter itself from example sentences, since it's redundant
+  exampleSentences = exampleSentences.filter(
+    (a) => a.japaneseSentence !== chars.join("")
+  );
 
   return {
     props: {
+      // Stupid next fails if we pass undefined lol
+      sentence: sentence ? sentence : null,
       exampleSentences,
       kanjis,
     },
