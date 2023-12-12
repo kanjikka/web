@@ -8,6 +8,8 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { TilesRenderer } from "./TilesRenderer";
+import { TilesEngine } from "./TilesEngine";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
@@ -18,6 +20,55 @@ export type TilesHandle = {
 };
 
 export const Tiles = forwardRef(function (
+  props: {
+    word: string;
+    tileWidth: number;
+    canvasWidth: number;
+    assistEnabled: boolean;
+    zoomLevel: number;
+  },
+  ref
+) {
+  const canvasRef = useRef([]);
+
+  useImperativeHandle(ref, () => ({
+    clear: () => {
+      canvasRef.current?.forEach((r) => {
+        r.clear();
+      });
+    },
+  }));
+
+  if (!props.tileWidth || !props.canvasWidth || !props.word.length) {
+    return <></>;
+  }
+
+  // Since on each render new refs will be added
+  // We check if they exist first
+  // Source: https://stackoverflow.com/a/70711046
+  const setRef: (el) => void = (el) => {
+    if (el && !canvasRef.current.includes(el)) {
+      canvasRef.current.push(el);
+    }
+  };
+
+  const tiles = TilesEngine({
+    maxWidth: props.canvasWidth,
+    tileWidth: props.tileWidth,
+    word: props.word,
+  });
+
+  return (
+    <TilesRenderer
+      ref={setRef}
+      tiles={tiles}
+      tileWidth={props.tileWidth}
+      zoomLevel={props.zoomLevel}
+    />
+  );
+});
+
+export const __Tiles = forwardRef(function (
   props: {
     word: string;
     tileWidth: number;
@@ -46,7 +97,7 @@ export const Tiles = forwardRef(function (
 
   useEffect(() => {
     const columns = Math.floor(props.canvasWidth / tileWidth);
-    const numRows = 7;
+    const numRows = Math.ceil(word.length / columns);
     const newTilesNum = numRows * columns;
 
     setNumTiles(newTilesNum);
@@ -207,9 +258,10 @@ export const Tiles = forwardRef(function (
         // Start at index 1, so that we can sum i + j
         // And get an unique id
         for (let j = 0; j < spacesRequired; j++) {
+          const key = `${i}-${j}`;
           tiles.push(
             <div
-              key={i}
+              key={key}
               className={styles.tile}
               style={{
                 ...figureOutBorder(i),
@@ -219,7 +271,7 @@ export const Tiles = forwardRef(function (
               }}
             >
               <PracticeCanvas
-                canvasID={"canvas-" + i.toString()}
+                canvasID={"canvas-" + key}
                 forwardRef={setRef}
                 width={tileWidth}
                 height={tileWidth}
