@@ -1,20 +1,82 @@
 import styles from "./Tiles.module.css";
+import dynamic from "next/dynamic";
+import React, {
+  forwardRef,
+  MutableRefObject,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
-export function Tiles(props: {
-  word: string;
-  tileWidth: number;
-  canvasWidth: number;
-  windowWidth: number;
-  assistEnabled: boolean;
-}) {
-  const { assistEnabled, word, tileWidth } = props;
+const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
+  ssr: false,
+});
+
+export type TilesHandle = {
+  clear: () => void;
+};
+
+export const Tiles = forwardRef(function (
+  props: {
+    word: string;
+    tileWidth: number;
+    canvasWidth: number;
+    assistEnabled: boolean;
+    zoomLevel: number;
+  },
+  // TODO: type
+  ref: MutableRefObject<TilesHandle>
+) {
+  const canvasRef = useRef([]);
+  const { assistEnabled, word, tileWidth, canvasWidth, zoomLevel } = props;
+  const [numTiles, setNumTiles] = useState(0);
 
   let tiles = [];
 
   const columns = Math.floor(props.canvasWidth / tileWidth);
 
-  // TODO: figure this out, since it depends on other factors
-  const tilesNum = columns * 7;
+  useImperativeHandle(ref, () => ({
+    clear: () => {
+      canvasRef.current?.forEach((r) => r?.clear());
+    },
+  }));
+
+  useEffect(() => {
+    const columns = Math.floor(props.canvasWidth / tileWidth);
+    const numRows = 7;
+    const newTilesNum = numRows * columns;
+
+    setNumTiles(newTilesNum);
+
+    // TODO:
+    // 2 constraints:
+    // Not lose any data, and it fill missing tiles
+    // So we need to check the last written tile
+    // And take the max between sentence size and the last written tile
+
+    //    if (columns && newTilesNum) {
+    //      // Never reduce the number of tiles
+    //      // Reasoning is that we don't want to lose information
+    //      let maxNumTiles = Math.max(newTilesNum, numTiles);
+    //      const res = maxNumTiles % columns;
+    //      // Still have to fill
+    //      console.log({
+    //        res,
+    //        columns,
+    //        maxNumTiles,
+    //      });
+    //      if (res > 0) {
+    //        console.log("adicionando", columns - res);
+    //        maxNumTiles = maxNumTiles + (columns - res);
+    //      }
+    //
+    //      console.log("new num tiles", maxNumTiles);
+    //      setNumTiles(maxNumTiles);
+    //    }
+    //
+    // TODO: fill with next multiple of the number of columns
+  }, [canvasWidth, tileWidth]);
 
   function tileImg(c?: string) {
     if (!assistEnabled || !c) {
@@ -24,7 +86,7 @@ export function Tiles(props: {
     return `url(/kanji-template/${c}.svg)`;
   }
 
-  function findBorder(i: number) {
+  function figureOutBorder(i: number) {
     const border = "1px solid #ddd";
     const styles: React.CSSProperties = {};
 
@@ -40,14 +102,18 @@ export function Tiles(props: {
       styles.borderTop = border;
     }
 
-    if (i >= tilesNum - columns && i < tilesNum) {
+    if (i >= numTiles - columns && i < numTiles) {
       styles.borderBottom = border;
     }
 
     return styles;
   }
 
-  if (!tilesNum) {
+  if (!numTiles) {
+    return <></>;
+  }
+
+  if (!ref) {
     return <></>;
   }
 
@@ -57,16 +123,26 @@ export function Tiles(props: {
 
     return (
       <>
-        {Array.from(Array(tilesNum).keys()).map((a) => {
+        {Array.from(Array(numTiles).keys()).map((i) => {
           return (
             <div
-              key={a}
+              key={i}
               className={styles.tile}
               style={{
-                ...findBorder(a),
+                ...figureOutBorder(i),
                 backgroundImage: tileImg(c),
               }}
-            />
+            >
+              <PracticeCanvas
+                canvasID={"canvas-" + i.toString()}
+                forwardRef={(r) => {
+                  canvasRef.current[i] = r;
+                }}
+                width={tileWidth}
+                height={tileWidth}
+                zoomLevel={zoomLevel}
+              ></PracticeCanvas>
+            </div>
           );
         })}
       </>
@@ -75,7 +151,7 @@ export function Tiles(props: {
 
   let wordPointer = 0;
 
-  for (let i = 0; tiles.length < tilesNum; ) {
+  for (let i = 0; tiles.length < numTiles; ) {
     const c = word[wordPointer];
     // TODO: is this a valid way to index
 
@@ -87,12 +163,22 @@ export function Tiles(props: {
           key={i}
           className={styles.tile}
           style={{
-            ...findBorder(i),
+            ...figureOutBorder(i),
             width: tileWidth,
             height: tileWidth,
             backgroundImage: tileImg(c),
           }}
-        ></div>
+        >
+          <PracticeCanvas
+            canvasID={"canvas-" + i.toString()}
+            forwardRef={(r) => {
+              canvasRef.current[i] = r;
+            }}
+            width={tileWidth}
+            height={tileWidth}
+            zoomLevel={zoomLevel}
+          ></PracticeCanvas>
+        </div>
       );
       i++;
       wordPointer = (wordPointer + 1) % word.length;
@@ -107,18 +193,30 @@ export function Tiles(props: {
 
       // Padding until row is finished
       if (paddingRequired) {
-        for (let j = 0; j < spacesRequired; j++) {
+        // Start at index 1, so that we can sum i + j
+        // And get an unique id
+        for (let j = 1; j <= spacesRequired; j++) {
           tiles.push(
             <div
               key={`${i}-${j}`}
               className={styles.tile}
               style={{
-                ...findBorder(i),
+                ...figureOutBorder(i),
                 width: tileWidth,
                 height: tileWidth,
                 backgroundImage: tileImg(),
               }}
-            ></div>
+            >
+              <PracticeCanvas
+                canvasID={"canvas-" + i.toString()}
+                forwardRef={(r) => {
+                  canvasRef.current[i + j] = r;
+                }}
+                width={tileWidth}
+                height={tileWidth}
+                zoomLevel={zoomLevel}
+              ></PracticeCanvas>
+            </div>
           );
           i++;
           // }
@@ -133,16 +231,26 @@ export function Tiles(props: {
         key={i}
         className={styles.tile}
         style={{
-          ...findBorder(i),
+          ...figureOutBorder(i),
           width: tileWidth,
           height: tileWidth,
           backgroundImage: tileImg(c),
         }}
-      ></div>
+      >
+        <PracticeCanvas
+          canvasID={"canvas-" + i.toString()}
+          forwardRef={(r) => {
+            canvasRef.current[i] = r;
+          }}
+          width={tileWidth}
+          height={tileWidth}
+          zoomLevel={zoomLevel}
+        ></PracticeCanvas>
+      </div>
     );
     i++;
     wordPointer = (wordPointer + 1) % word.length;
   }
 
   return <>{tiles}</>;
-}
+});

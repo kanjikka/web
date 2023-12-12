@@ -5,7 +5,7 @@ import { Kanji } from "../models/kanji.schema";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSyncContext, sendToOtherDevices } from "../../pages/sync";
-import { Tiles } from "./Tiles";
+import { Tiles, TilesHandle } from "./Tiles";
 import { Tutorial } from "./Tutorial";
 import { Title } from "./Title";
 import { KeyboardHandler } from "./Keyboard";
@@ -25,23 +25,24 @@ export default function Draw(props: {
   exampleSentences: ExampleSentence[];
   sentence?: ExampleSentence;
 }) {
+  const tilesRef = useRef<TilesHandle>();
   const router = useRouter();
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
   const { canvasWidth, canvasHeight } = useCanvasObserver({
     canvasWrapRef,
-    canvasRef,
   });
   const [assist, setAssist] = useState(true);
   const word = props.kanjis.map((a) => a.name).join("");
   const { syncConfig, toggleLocked } = useSyncContext();
-  const { tileWidth, zoomIn, zoomOut, canZoomIn, canZoomOut } = useZoom({
-    canvasWidth,
-  });
+  const { tileWidth, zoomIn, zoomOut, canZoomIn, canZoomOut, zoomLevel } =
+    useZoom({
+      canvasWidth,
+    });
 
   // Clear canvas when word changes
   useEffect(() => {
-    canvasRef.current?.clear();
+    tilesRef.current?.clear();
   }, [word]);
 
   return (
@@ -72,6 +73,15 @@ export default function Draw(props: {
         <h4>Practice:</h4>
 
         <Toolbar
+          onClear={() => {
+            tilesRef.current?.clear();
+            // TODO: figure out why r is sometimes null
+            //tilesRef.current.forEach((r, i) => {
+            //  if (r) {
+            //    r.clear();
+            //  }
+            //});
+          }}
           canvasRef={canvasRef}
           toggleAssist={() => setAssist((prevAssist) => !prevAssist)}
           sync={() => sendToOtherDevices(word)}
@@ -88,23 +98,27 @@ export default function Draw(props: {
             <div id="tiles" className={styles.tiles}>
               {typeof window !== "undefined" && (
                 <Tiles
+                  ref={tilesRef}
+                  zoomLevel={zoomLevel}
                   tileWidth={tileWidth}
                   word={word}
                   assistEnabled={assist}
                   canvasWidth={canvasWidth}
-                  windowWidth={window.innerWidth}
                 />
               )}
             </div>
           </div>
 
           <KeyboardHandler canvasRef={canvasRef} />
+          {/*
           <PracticeCanvas
-            forwardRef={canvasRef}
+            canvasID="canvas"
+            /orwardRef={canvasRef}
             width={canvasWidth}
             height={canvasHeight}
             className={styles.canvas}
           ></PracticeCanvas>
+            */}
         </div>
       </div>
     </div>

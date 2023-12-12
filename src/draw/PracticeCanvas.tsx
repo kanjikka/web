@@ -14,12 +14,14 @@ import { useHistory } from "./history";
 import { IEvent } from "fabric/fabric-impl";
 
 // eh, should be unique enough
-const CANVAS_ID = "drawing-canvas";
+//const CANVAS_ID = "drawing-canvas";
 
 type PracticeCanvasProps = {
   width: number;
   height: number;
   className?: string;
+  canvasID: string;
+  zoomLevel?: number;
 };
 
 export default function PCanvas({
@@ -43,6 +45,7 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
   const canvas = useRef<fabric.Canvas>();
   const [isDrawing, setIsDrawing] = useState(false);
   const [locked, setLocked] = useState(false);
+  const { zoomLevel } = props;
 
   // TODO
   // load from local storage or something
@@ -121,7 +124,16 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
   }, [history.present]);
 
   useEffect(() => {
-    const c = new fabric.Canvas(CANVAS_ID, {
+    if (!canvas || !canvas.current) {
+      return;
+    }
+
+    console.log("setting zoom to", zoomLevel);
+    canvas.current.setZoom(zoomLevel);
+  }, [zoomLevel]);
+
+  useEffect(() => {
+    const c = new fabric.Canvas(props.canvasID, {
       isDrawingMode: true,
       width: props.width,
       height: props.height,
@@ -159,7 +171,7 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
 
   return (
     <div className={props.className}>
-      <canvas id={CANVAS_ID}></canvas>
+      <canvas id={props.canvasID}></canvas>
     </div>
   );
 };
