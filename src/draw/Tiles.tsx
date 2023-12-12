@@ -38,7 +38,9 @@ export const Tiles = forwardRef(function (
 
   useImperativeHandle(ref, () => ({
     clear: () => {
-      canvasRef.current?.forEach((r) => r?.clear());
+      canvasRef.current?.forEach((r) => {
+        r.clear();
+      });
     },
   }));
 
@@ -77,6 +79,19 @@ export const Tiles = forwardRef(function (
     //
     // TODO: fill with next multiple of the number of columns
   }, [canvasWidth, tileWidth]);
+
+  //  function setRef(ref) {
+  //    canvasRef.current.push(ref);
+  //  }
+
+  // Since on each render new refs will be added
+  // We check if they exist first
+  // Source: https://stackoverflow.com/a/70711046
+  const setRef: (el) => void = (el) => {
+    if (el && !canvasRef.current.includes(el)) {
+      canvasRef.current.push(el);
+    }
+  };
 
   function tileImg(c?: string) {
     if (!assistEnabled || !c) {
@@ -135,9 +150,7 @@ export const Tiles = forwardRef(function (
             >
               <PracticeCanvas
                 canvasID={"canvas-" + i.toString()}
-                forwardRef={(r) => {
-                  canvasRef.current[i] = r;
-                }}
+                forwardRef={setRef}
                 width={tileWidth}
                 height={tileWidth}
                 zoomLevel={zoomLevel}
@@ -151,7 +164,7 @@ export const Tiles = forwardRef(function (
 
   let wordPointer = 0;
 
-  for (let i = 0; tiles.length < numTiles; ) {
+  for (let i = 0, j = 0; tiles.length < numTiles; ) {
     const c = word[wordPointer];
     // TODO: is this a valid way to index
 
@@ -171,9 +184,7 @@ export const Tiles = forwardRef(function (
         >
           <PracticeCanvas
             canvasID={"canvas-" + i.toString()}
-            forwardRef={(r) => {
-              canvasRef.current[i] = r;
-            }}
+            forwardRef={setRef}
             width={tileWidth}
             height={tileWidth}
             zoomLevel={zoomLevel}
@@ -195,10 +206,10 @@ export const Tiles = forwardRef(function (
       if (paddingRequired) {
         // Start at index 1, so that we can sum i + j
         // And get an unique id
-        for (let j = 1; j <= spacesRequired; j++) {
+        for (let j = 0; j < spacesRequired; j++) {
           tiles.push(
             <div
-              key={`${i}-${j}`}
+              key={i}
               className={styles.tile}
               style={{
                 ...figureOutBorder(i),
@@ -209,9 +220,7 @@ export const Tiles = forwardRef(function (
             >
               <PracticeCanvas
                 canvasID={"canvas-" + i.toString()}
-                forwardRef={(r) => {
-                  canvasRef.current[i + j] = r;
-                }}
+                forwardRef={setRef}
                 width={tileWidth}
                 height={tileWidth}
                 zoomLevel={zoomLevel}
@@ -239,9 +248,7 @@ export const Tiles = forwardRef(function (
       >
         <PracticeCanvas
           canvasID={"canvas-" + i.toString()}
-          forwardRef={(r) => {
-            canvasRef.current[i] = r;
-          }}
+          forwardRef={setRef}
           width={tileWidth}
           height={tileWidth}
           zoomLevel={zoomLevel}
