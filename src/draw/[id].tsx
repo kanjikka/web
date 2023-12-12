@@ -5,7 +5,7 @@ import { Kanji } from "../models/kanji.schema";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { useSyncContext, sendToOtherDevices } from "../../pages/sync";
-import { Tiles } from "./Tiles";
+import { Tiles, TilesHandle } from "./Tiles";
 import { Tutorial } from "./Tutorial";
 import { Title } from "./Title";
 import { KeyboardHandler } from "./Keyboard";
@@ -25,13 +25,12 @@ export default function Draw(props: {
   exampleSentences: ExampleSentence[];
   sentence?: ExampleSentence;
 }) {
-  const tilesRef = useRef([]);
+  const tilesRef = useRef<TilesHandle>();
   const router = useRouter();
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
   const { canvasWidth, canvasHeight } = useCanvasObserver({
     canvasWrapRef,
-    canvasRef,
   });
   const [assist, setAssist] = useState(true);
   const word = props.kanjis.map((a) => a.name).join("");
@@ -43,12 +42,8 @@ export default function Draw(props: {
 
   // Clear canvas when word changes
   useEffect(() => {
-    // canvasRef.current?.clear();
+    tilesRef.current?.clear();
   }, [word]);
-
-  useEffect(() => {
-    console.log("tilesRef", tilesRef);
-  }, [tilesRef.current]);
 
   return (
     <div className={styles.container}>
@@ -79,12 +74,13 @@ export default function Draw(props: {
 
         <Toolbar
           onClear={() => {
+            tilesRef.current?.clear();
             // TODO: figure out why r is sometimes null
-            tilesRef.current.forEach((r, i) => {
-              if (r) {
-                r.clear();
-              }
-            });
+            //tilesRef.current.forEach((r, i) => {
+            //  if (r) {
+            //    r.clear();
+            //  }
+            //});
           }}
           canvasRef={canvasRef}
           toggleAssist={() => setAssist((prevAssist) => !prevAssist)}
@@ -108,7 +104,6 @@ export default function Draw(props: {
                   word={word}
                   assistEnabled={assist}
                   canvasWidth={canvasWidth}
-                  windowWidth={window.innerWidth}
                 />
               )}
             </div>
@@ -118,7 +113,7 @@ export default function Draw(props: {
           {/*
           <PracticeCanvas
             canvasID="canvas"
-            forwardRef={canvasRef}
+            /orwardRef={canvasRef}
             width={canvasWidth}
             height={canvasHeight}
             className={styles.canvas}

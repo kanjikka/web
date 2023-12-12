@@ -30,8 +30,8 @@ export function useZoom(props: ZoomProps) {
   const [tileWidthHeight, setTileWidthHeight] = useState(DEFAULT_TILE_WIDTH);
   const [initialTileWidth, setInitialTileWidth] = useState(DEFAULT_TILE_WIDTH);
   const [zoomLevel, setZoomLevel] = useState(1);
-
   const { canvasWidth } = props;
+
   // Since we will add borders to the first and last item
   // They also needed to be accounted for
   const canvasSizeWidth = canvasWidth - 2;

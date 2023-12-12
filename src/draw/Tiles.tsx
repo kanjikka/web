@@ -1,40 +1,82 @@
 import styles from "./Tiles.module.css";
 import dynamic from "next/dynamic";
 import React, {
-  ForwardedRef,
   forwardRef,
   MutableRefObject,
   useEffect,
+  useImperativeHandle,
   useRef,
   useState,
 } from "react";
-import { useZoom } from "./useZoom";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
 });
+
+export type TilesHandle = {
+  clear: () => void;
+};
 
 export const Tiles = forwardRef(function (
   props: {
     word: string;
     tileWidth: number;
     canvasWidth: number;
-    windowWidth: number;
     assistEnabled: boolean;
     zoomLevel: number;
   },
   // TODO: type
-  ref: MutableRefObject<any[]>
+  ref: MutableRefObject<TilesHandle>
 ) {
-  const { assistEnabled, word, tileWidth, zoomLevel } = props;
+  const canvasRef = useRef([]);
+  const { assistEnabled, word, tileWidth, canvasWidth, zoomLevel } = props;
+  const [numTiles, setNumTiles] = useState(0);
 
   let tiles = [];
 
   const columns = Math.floor(props.canvasWidth / tileWidth);
 
-  // TODO: figure this out, since it depends on other factors
-  const tilesNum = columns * 7;
-  //const tilesNum = 1;
+  useImperativeHandle(ref, () => ({
+    clear: () => {
+      canvasRef.current?.forEach((r) => r?.clear());
+    },
+  }));
+
+  useEffect(() => {
+    const columns = Math.floor(props.canvasWidth / tileWidth);
+    const numRows = 7;
+    const newTilesNum = numRows * columns;
+
+    setNumTiles(newTilesNum);
+
+    // TODO:
+    // 2 constraints:
+    // Not lose any data, and it fill missing tiles
+    // So we need to check the last written tile
+    // And take the max between sentence size and the last written tile
+
+    //    if (columns && newTilesNum) {
+    //      // Never reduce the number of tiles
+    //      // Reasoning is that we don't want to lose information
+    //      let maxNumTiles = Math.max(newTilesNum, numTiles);
+    //      const res = maxNumTiles % columns;
+    //      // Still have to fill
+    //      console.log({
+    //        res,
+    //        columns,
+    //        maxNumTiles,
+    //      });
+    //      if (res > 0) {
+    //        console.log("adicionando", columns - res);
+    //        maxNumTiles = maxNumTiles + (columns - res);
+    //      }
+    //
+    //      console.log("new num tiles", maxNumTiles);
+    //      setNumTiles(maxNumTiles);
+    //    }
+    //
+    // TODO: fill with next multiple of the number of columns
+  }, [canvasWidth, tileWidth]);
 
   function tileImg(c?: string) {
     if (!assistEnabled || !c) {
@@ -60,14 +102,14 @@ export const Tiles = forwardRef(function (
       styles.borderTop = border;
     }
 
-    if (i >= tilesNum - columns && i < tilesNum) {
+    if (i >= numTiles - columns && i < numTiles) {
       styles.borderBottom = border;
     }
 
     return styles;
   }
 
-  if (!tilesNum) {
+  if (!numTiles) {
     return <></>;
   }
 
@@ -81,7 +123,7 @@ export const Tiles = forwardRef(function (
 
     return (
       <>
-        {Array.from(Array(tilesNum).keys()).map((i) => {
+        {Array.from(Array(numTiles).keys()).map((i) => {
           return (
             <div
               key={i}
@@ -94,7 +136,7 @@ export const Tiles = forwardRef(function (
               <PracticeCanvas
                 canvasID={"canvas-" + i.toString()}
                 forwardRef={(r) => {
-                  ref.current[i] = r;
+                  canvasRef.current[i] = r;
                 }}
                 width={tileWidth}
                 height={tileWidth}
@@ -109,7 +151,7 @@ export const Tiles = forwardRef(function (
 
   let wordPointer = 0;
 
-  for (let i = 0; tiles.length < tilesNum; ) {
+  for (let i = 0; tiles.length < numTiles; ) {
     const c = word[wordPointer];
     // TODO: is this a valid way to index
 
@@ -130,7 +172,7 @@ export const Tiles = forwardRef(function (
           <PracticeCanvas
             canvasID={"canvas-" + i.toString()}
             forwardRef={(r) => {
-              ref.current[i] = r;
+              canvasRef.current[i] = r;
             }}
             width={tileWidth}
             height={tileWidth}
@@ -151,7 +193,9 @@ export const Tiles = forwardRef(function (
 
       // Padding until row is finished
       if (paddingRequired) {
-        for (let j = 0; j < spacesRequired; j++) {
+        // Start at index 1, so that we can sum i + j
+        // And get an unique id
+        for (let j = 1; j <= spacesRequired; j++) {
           tiles.push(
             <div
               key={`${i}-${j}`}
@@ -166,7 +210,7 @@ export const Tiles = forwardRef(function (
               <PracticeCanvas
                 canvasID={"canvas-" + i.toString()}
                 forwardRef={(r) => {
-                  ref.current[i] = r;
+                  canvasRef.current[i + j] = r;
                 }}
                 width={tileWidth}
                 height={tileWidth}
@@ -196,7 +240,7 @@ export const Tiles = forwardRef(function (
         <PracticeCanvas
           canvasID={"canvas-" + i.toString()}
           forwardRef={(r) => {
-            ref.current[i] = r;
+            canvasRef.current[i] = r;
           }}
           width={tileWidth}
           height={tileWidth}
