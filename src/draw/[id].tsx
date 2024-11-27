@@ -15,35 +15,47 @@ import { useCanvasObserver } from "./useCanvasObserver";
 import { ExampleSentence } from "../models/exampleSentence.schema";
 import { ExampleSentences } from "./ExampleSentence";
 import Search from "../search/search";
+import { getAllCharacters, getKanji } from "../svc/kanji";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
 });
 
-export default function Draw(props: {
-  kanjis: Kanji[];
-  exampleSentences: ExampleSentence[];
-  sentence?: ExampleSentence;
-}) {
+export default function Draw() {
   const tilesRef = useRef<TilesHandle>();
   const router = useRouter();
+  const query = router.query.id as string;
+
   const canvasRef = useRef(null);
   const canvasWrapRef = useRef(null);
   const { canvasWidth, canvasHeight } = useCanvasObserver({
     canvasWrapRef,
   });
   const [assist, setAssist] = useState(true);
-  const word = props.kanjis.map((a) => a.name).join("");
   const { syncConfig, toggleLocked } = useSyncContext();
   const { tileWidth, zoomIn, zoomOut, canZoomIn, canZoomOut, zoomLevel } =
     useZoom({
       canvasWidth,
     });
 
+  const [kanjis, setKanjis] = useState<Kanji[]>([]);
+
   // Clear canvas when word changes
   useEffect(() => {
     tilesRef.current?.clear();
-  }, [word]);
+  }, [query]);
+
+  useEffect(() => {
+    async function load() {
+      if (Array.isArray(query)) {
+        throw new Error("Multiple Queries in URL");
+      }
+      const res = await getAllCharacters(query);
+      setKanjis(res);
+    }
+
+    load();
+  }, [query]);
 
   return (
     <div className={styles.container}>
@@ -56,7 +68,7 @@ export default function Draw(props: {
       </div>
 
       <div className={styles.title}>
-        <Title characters={props.kanjis} sentence={props.sentence} />
+        <Title chars={query.split("")} />
       </div>
       <div className={styles.reference}>
         <details>
@@ -64,10 +76,8 @@ export default function Draw(props: {
             <h4 style={{ display: "inline-block" }}>Tutorial:</h4>
           </summary>
 
-          <Tutorial characters={props.kanjis} />
+          <Tutorial characters={kanjis} />
         </details>
-
-        <ExampleSentences sentences={props.exampleSentences} />
       </div>
       <div>
         <h4>Practice:</h4>
@@ -84,7 +94,9 @@ export default function Draw(props: {
           }}
           canvasRef={canvasRef}
           toggleAssist={() => setAssist((prevAssist) => !prevAssist)}
-          sync={() => sendToOtherDevices(word)}
+          sync={() => {
+            /*sendToOtherDevices(word) */
+          }}
           isLocked={syncConfig.locked}
           toggleLocked={toggleLocked}
           canZoomIn={canZoomIn}
@@ -101,7 +113,7 @@ export default function Draw(props: {
                   ref={tilesRef}
                   zoomLevel={zoomLevel}
                   tileWidth={tileWidth}
-                  word={word}
+                  word={query}
                   assistEnabled={assist}
                   canvasWidth={canvasWidth}
                 />

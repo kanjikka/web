@@ -7,9 +7,9 @@
 <line x1="1" y1="54" x2="217" y2="54" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
 <line x1="55" y1="1" x2="55" y2="108" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
 <line x1="164" y1="1" x2="164" y2="108" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
-<path d="M19.5,15.17c10.08,22.4,30.08,67.63,34.47,77.31" style="fill:none;stroke:#999;stroke-width:3"></path>
+<path d="M29.0,35.26c7.33,16.59,21.87,50.08,25.06,57.25" style="fill:none;stroke:#999;stroke-width:3"></path>
 
-<path d="M128.5,15.17c10.08,22.4,30.08,67.63,34.47,77.31" style="fill:none;stroke:#999;stroke-width:3"></path>
-<path d="M197.84,15.5c-6.78,15.34-29.01,64.94-34.6,77.06" style="fill:none;stroke:#999;stroke-width:3"></path>
+<path d="M138.0,35.26c7.33,16.59,21.87,50.08,25.06,57.25" style="fill:none;stroke:#999;stroke-width:3"></path>
+<path d="M188.42000000000002,35.5c-4.93,11.36-21.09,48.08-25.15,57.06" style="fill:none;stroke:#999;stroke-width:3"></path>
 
 </svg>

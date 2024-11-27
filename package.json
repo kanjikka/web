@@ -8,10 +8,12 @@
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "hack": "ts-node --project hacks/tsconfig.json",
+    "hacks:from-jisho": "npm run hack -- hacks/from-jisho.ts",
     "hacks:generate-from-kanjivg": "npm run hack -- hacks/generate-from-kanjivg/script.ts",
     "hacks:example-sentences": "npm run hack -- hacks/example-sentence/script.ts"
   },
   "dependencies": {
+    "@47ng/codec": "^1.1.0",
     "@arch-inc/fabricjs-psbrush": "0.0.17",
     "cors": "^2.8.5",
     "fabric": "^4.5.0",

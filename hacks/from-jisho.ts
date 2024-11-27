@@ -11,6 +11,8 @@ import * as datastore from "./db";
 
 import { Database } from "sqlite";
 
+import { prefixFilenameCase } from "../src/svc/prefixFilename";
+
 // Load list of all kanjis
 // One by one:
 // if stored in cache, skip
@@ -23,6 +25,7 @@ import allKanji from "../public/all-kanji.json";
 // comes from
 // https://github.com/rouleaup88/Kanji-stroke-order
 import allSvg from "../All_svg.json";
+import { utf8 } from "@47ng/codec";
 
 const RESULTS_DIR = "results";
 
@@ -318,8 +321,10 @@ async function mirrorSVGTableToFs(db: Database) {
   const svgs = await datastore.getAllSvg(db);
 
   for (let svg of svgs) {
+    const name = prefixFilenameCase(svg.name);
+
     await fs.writeFile(
-      path.join(__dirname, "../", "public", "svg", svg.name + ".json"),
+      path.join(__dirname, "../", "public", "svg", name + ".json"),
       JSON.stringify(svg),
       { flag: "w" }
     );

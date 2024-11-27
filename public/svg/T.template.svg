@@ -7,9 +7,9 @@
 <line x1="1" y1="54" x2="217" y2="54" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
 <line x1="55" y1="1" x2="55" y2="108" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
 <line x1="164" y1="1" x2="164" y2="108" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
-<path d="M23.0,16.94c2.31,0,41.94,0,62.9,0" style="fill:none;stroke:#999;stroke-width:3"></path>
+<path d="M51.01,22.14c0,19.36,0,55.35,0,61.42c0,12.43,14.85,9,21.93,4.81" style="fill:none;stroke:#999;stroke-width:3"></path>
 
-<path d="M132.0,16.94c2.31,0,41.94,0,62.9,0" style="fill:none;stroke:#999;stroke-width:3"></path>
-<path d="M163.5,17.57c0,29.53,0,42.03,0,75.27" style="fill:none;stroke:#999;stroke-width:3"></path>
+<path d="M160.01,22.14c0,19.36,0,55.35,0,61.42c0,12.43,14.85,9,21.93,4.81" style="fill:none;stroke:#999;stroke-width:3"></path>
+<path d="M146.0,36.6c6.21,0,26.18,0.14,35,0.14" style="fill:none;stroke:#999;stroke-width:3"></path>
 
 </svg>

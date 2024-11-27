@@ -24,12 +24,23 @@ export const KanjiSchema = z.object({
   name: z.string(),
   svg: SvgSchema,
 
-  jisho: z
-    .object({
-      meaning: z.string().optional(),
-    })
-    .optional(),
+  //  jisho: z
+  //    .object({
+  //      meaning: z.string().optional(),
+  //    })
+  //    .optional(),
+});
+
+export const CharacterSchema = z.object({
+  individualWidth: z.number().default(109),
+  templateFilename: z.string(),
+  strokeOrderFilename: z.string(),
+
+  width: z.number(),
+  height: z.number(),
+  name: z.string(),
 });
 
 export type Svg = ReturnType<typeof SvgSchema.parse>;
 export type Kanji = ReturnType<typeof KanjiSchema.parse>;
+export type Character = ReturnType<typeof CharacterSchema.parse>;
