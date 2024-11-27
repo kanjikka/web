@@ -17,17 +17,21 @@ type TilesEngineProps = {
   tileWidth: number;
   word: string;
 };
+
+// TODO: figure out, with maximum zoom, what the maximum amount of readonly tiles
 export function TilesEngine(p: TilesEngineProps): TileStructure[] {
   const { word, maxWidth, tileWidth } = p;
 
   const columns = Math.floor(maxWidth / tileWidth);
-  const numRows = Math.ceil(word.length / columns);
-  //  const numRows = 7;
-  const numTiles = numRows * columns;
-  console.log({ numRows });
+  // We need at least X rows to fit everything
+  const minRows = Math.ceil(word.length / columns);
+  let numTiles = minRows * columns;
 
   // Single kanji
+  // Fill all tiles with that kanji
+  // TODO: if we zoom in, we may end up losing info...
   if (word.length === 1) {
+    //numTiles = columns * 5;
     const tile = {
       character: word[0],
       readOnly: false,

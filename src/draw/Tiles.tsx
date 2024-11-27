@@ -62,6 +62,7 @@ export const Tiles = forwardRef(function (
     <TilesRenderer
       ref={setRef}
       tiles={tiles}
+      assistEnabled={props.assistEnabled}
       tileWidth={props.tileWidth}
       zoomLevel={props.zoomLevel}
     />

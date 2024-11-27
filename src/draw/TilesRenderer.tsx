@@ -12,13 +12,14 @@ type TilesRenderProps = {
   tiles: TileStructure[];
   tileWidth: number;
   zoomLevel: number;
+  assistEnabled: boolean;
 };
 
 export const TilesRenderer = forwardRef(function (
   props: TilesRenderProps,
   ref: ForwardedRef<PracticeCanvasHandle>
 ) {
-  const { tiles, tileWidth, zoomLevel } = props;
+  const { tiles, tileWidth, zoomLevel, assistEnabled } = props;
 
   return (
     <>
@@ -31,7 +32,7 @@ export const TilesRenderer = forwardRef(function (
               //...figureOutBorder(i),
               //width: tileWidth,
               //height: tileWidth,
-              backgroundImage: tileImg(true, c.character),
+              ...findOutStyles(assistEnabled, c.character),
             }}
           >
             <Canvas
@@ -72,6 +73,19 @@ const Canvas = forwardRef(function (
     ></PracticeCanvas>
   );
 });
+
+function findOutStyles(assistEnabled: boolean, character?: string) {
+  const styles: React.CSSProperties = {};
+
+  styles.backgroundImage = tileImg(assistEnabled, character);
+
+  // It's a padding one
+  if (!character) {
+    styles.backgroundColor = "#80808017";
+  }
+
+  return styles;
+}
 
 function tileImg(assistEnabled: boolean, c?: string) {
   if (!assistEnabled || !c) {
