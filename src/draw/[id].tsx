@@ -8,7 +8,7 @@ import { useSyncContext, sendToOtherDevices } from "../../pages/sync";
 import { Tiles, TilesHandle } from "./Tiles";
 import { Tutorial } from "./Tutorial";
 import { Title } from "./Title";
-import { KeyboardHandler } from "./Keyboard";
+//import { KeyboardHandler } from "./Keyboard";
 import { Toolbar } from "./Toolbar";
 import { useZoom } from "./useZoom";
 import { useCanvasObserver } from "./useCanvasObserver";
@@ -121,7 +121,10 @@ export default function Draw() {
             </div>
           </div>
 
+          {/*
+
           <KeyboardHandler canvasRef={canvasRef} />
+            */}
           {/*
           <PracticeCanvas
             canvasID="canvas"
