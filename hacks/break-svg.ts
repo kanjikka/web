@@ -1,8 +1,9 @@
 // break each svg from All_svg.json
 // into its own file
-import allSvg from "../All_svg.json";
+//import allSvg from "../All_svg.json";
 import fs from "fs";
 import path from "path";
+const allSvg = require("../All_svg.json");
 
 Object.keys(allSvg).forEach((a) => {
   const filename = path.join("public", "kanji", a + ".json");
