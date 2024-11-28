@@ -26,23 +26,25 @@ import { useRouter } from "next/router";
 //  }, [word]);
 //}
 
-export default function Home(props: { names: string[] }) {
-  const router = useRouter();
-
-  console.log("router pathname", router.pathname);
+export default function Home() {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Kanji Drawing Practice</title>
+        <title>Japanese Writing Practice</title>
+        {/*
         <meta name="description" content="Kanji Drawing Practice appn" />
+      */}
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Practice Kanji Drawing</h1>
-        <Search available={props.names} />
+        <h1 className={styles.title}>Japanese Writing Practice</h1>
+        <Search />
+        {/*
+
         <Link href="/all">
           <a>(see list of available characters)</a>
         </Link>
+          */}
       </main>
     </div>
   );

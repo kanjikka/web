@@ -21,7 +21,9 @@
   width: calc(var(--tile-width) * var(--main-columns));
   */
   /* TODO: figure out a way to use all available, ideally we would use all available space at minimum */
+  /*
   min-height: calc(var(--tile-height) * 7);
+  */
 
   overflow: hidden;
 }

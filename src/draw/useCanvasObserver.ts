@@ -2,11 +2,10 @@ import { useState, useEffect } from "react";
 
 type UseCanvasObserverProps = {
   canvasWrapRef: React.MutableRefObject<HTMLDivElement>;
-  canvasRef: React.MutableRefObject<HTMLDivElement>;
 };
 
 /**
- * Observers when the canvas changes size and sets it appropriately
+ * Observes when the maximum container width changes
  */
 export function useCanvasObserver(props: UseCanvasObserverProps) {
   const { canvasWrapRef } = props;

@@ -1,6 +1,7 @@
 import { Kanji } from "../models/kanji.schema";
 import Link from "next/link";
 import styles from "./Tutorial.module.css";
+import { getLink } from "@/svc/router";
 
 // that explanation component
 export function Tutorial(props: { characters: Kanji[] }) {
@@ -14,7 +15,9 @@ export function Tutorial(props: { characters: Kanji[] }) {
       {kanjisUnique.map((k) => (
         <div key={k.name}>
           <h2>
-            <Link href={`/draw/${k.name}`}>{k.name}</Link>
+            <Link href={getLink({ name: "SHOW", query: k.name })}>
+              {k.name}
+            </Link>
           </h2>
           <TutorialTile key={k.name} characters={k} />
         </div>

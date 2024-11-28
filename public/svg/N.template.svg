@@ -1,21 +1,15 @@
-<svg width="327px" height="109px" viewBox="0 0 327 109" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" version="1.1" baseProfile="full">
-<line x1="1" y1="1" x2="326" y2="1" style="stroke:#ddd;stroke-width:2"></line>
+<svg width="218px" height="109px" viewBox="0 0 218 109" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" version="1.1" baseProfile="full">
+<line x1="1" y1="1" x2="217" y2="1" style="stroke:#ddd;stroke-width:2"></line>
 <line x1="1" y1="1" x2="1" y2="108" style="stroke:#ddd;stroke-width:2"></line>
-<line x1="1" y1="108" x2="326" y2="108" style="stroke:#ddd;stroke-width:2"></line>
-<line x1="326" y1="1" x2="326" y2="108" style="stroke:#ddd;stroke-width:2"></line>
+<line x1="1" y1="108" x2="217" y2="108" style="stroke:#ddd;stroke-width:2"></line>
+<line x1="217" y1="1" x2="217" y2="108" style="stroke:#ddd;stroke-width:2"></line>
 <line x1="109" y1="1" x2="109" y2="108" style="stroke:#ddd;stroke-width:2"></line>
-<line x1="218" y1="1" x2="218" y2="108" style="stroke:#ddd;stroke-width:2"></line>
-<line x1="1" y1="54" x2="326" y2="54" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
+<line x1="1" y1="54" x2="217" y2="54" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
 <line x1="55" y1="1" x2="55" y2="108" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
 <line x1="164" y1="1" x2="164" y2="108" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
-<line x1="273" y1="1" x2="273" y2="108" style="stroke:#ddd;stroke-width:2;stroke-dasharray:3 3"></line>
-<path d="M29.0,15.43c0,5.92,0,71.36,0,77.28" style="fill:none;stroke:#999;stroke-width:3"></path>
+<path d="M34.5,34.93c0,5.35,0,50.29,0,57.66" style="fill:none;stroke:#999;stroke-width:3"></path>
 
-<path d="M138.0,15.43c0,5.92,0,71.36,0,77.28" style="fill:none;stroke:#999;stroke-width:3"></path>
-<path d="M138.43,14.92c14.85,23.27,33.4,52.46,49.84,77.46" style="fill:none;stroke:#999;stroke-width:3"></path>
-
-<path d="M247.0,15.43c0,5.92,0,71.36,0,77.28" style="fill:none;stroke:#999;stroke-width:3"></path>
-<path d="M247.43,14.92c14.85,23.27,33.4,52.46,49.84,77.46" style="fill:none;stroke:#999;stroke-width:3"></path>
-<path d="M298.05,15.5c0,15.03,0,66.33,0,77.02" style="fill:none;stroke:#999;stroke-width:3"></path>
+<path d="M143.5,34.93c0,5.35,0,50.29,0,57.66" style="fill:none;stroke:#999;stroke-width:3"></path>
+<path d="M143.66,52.69c12.71-24.62,39.76-21.38,39.76-4.52c0,19.22,0,37.48,0,44.42" style="fill:none;stroke:#999;stroke-width:3"></path>
 
 </svg>
