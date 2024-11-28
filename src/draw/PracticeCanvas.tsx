@@ -128,7 +128,6 @@ const PracticeCanvasComponent: React.ForwardRefRenderFunction<
       return;
     }
 
-    console.log("setting zoom to", zoomLevel);
     canvas.current.setZoom(zoomLevel);
   }, [zoomLevel]);
 

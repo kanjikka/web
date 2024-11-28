@@ -14,7 +14,9 @@ export function getBackendURL() {
   return process.env.NEXT_PUBLIC_API_URL;
 }
 
-export function getAllCharacters(wordOrPhrase: string): Promise<Kanji[]> {
+export async function getAllCharacters(
+  wordOrPhrase: string
+): Promise<{ characters: Kanji[]; fail: any }> {
   // Break into individual characters
   const chars = wordOrPhrase
     .split("")
@@ -24,7 +26,11 @@ export function getAllCharacters(wordOrPhrase: string): Promise<Kanji[]> {
   // Only unique
   const uniq = [...new Set(chars)];
 
-  return Promise.all(uniq.map(getKanji));
+  const p = await Promise.allSettled(uniq.map(getKanji));
+  return {
+    characters: p.filter((s) => s.status === "fulfilled").map((s) => s.value),
+    fail: p.filter((s) => s.status === "rejected"),
+  };
 }
 
 export function getKanji(ch: string): Promise<Kanji> {
@@ -49,6 +55,10 @@ export function getKanji(ch: string): Promise<Kanji> {
 }
 
 function handleResponse(response: Response) {
+  if (!response.ok) {
+    throw Error(response.statusText);
+  }
+
   return response.text().then((text) => {
     const data = text && JSON.parse(text);
 

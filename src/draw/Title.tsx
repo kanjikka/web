@@ -1,3 +1,4 @@
+import { getLink } from "@/svc/router";
 import { Kanji } from "../models/kanji.schema";
 import Link from "next/link";
 
@@ -6,7 +7,13 @@ export function Title(props: { chars: string[] }) {
     <h1>
       {props.chars.map((c, i) => {
         return (
-          <Link key={`${c}-${i}`} href={`/draw/${c}`}>
+          <Link
+            key={`${c}-${i}`}
+            href={getLink({
+              name: "SHOW",
+              query: c,
+            })}
+          >
             {c}
           </Link>
         );

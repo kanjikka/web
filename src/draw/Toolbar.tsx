@@ -39,11 +39,14 @@ export function Toolbar(props: ToolbarProps) {
       <button onClick={() => canvasRef?.current?.redo()}>redo</button>
         */}
       <button onClick={onClear}>clear</button>
+      {/*
+
       <button onClick={() => toggleAssist()}>Toggle assist</button>
       <button onClick={() => sync()}>Send to other devices</button>
       <button onClick={() => toggleLocked()}>
         {isLocked ? "Enable" : "Disable"} Sync
       </button>
+    */}
       <button disabled={!canZoomOut} onClick={zoomOut}>
         Zoom out (-)
       </button>
