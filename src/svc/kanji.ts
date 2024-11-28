@@ -1,18 +1,6 @@
 import { CharacterSchema, Kanji } from "../models/kanji.schema";
 import { prefixFilenameCase } from "./prefixFilename";
-
-export function getBackendURL() {
-  if (process.env.NODE_ENV === "development") {
-    return "";
-  }
-
-  // TODO: centralize somewhere else?
-  if (process.env.NEXT_PUBLIC_API_URL === undefined) {
-    throw new Error("NEXT_PUBLIC_API_URL is not defined");
-  }
-
-  return process.env.NEXT_PUBLIC_API_URL;
-}
+import { addBasePath } from "next/dist/client/add-base-path";
 
 export async function getAllCharacters(
   wordOrPhrase: string
@@ -34,10 +22,9 @@ export async function getAllCharacters(
 }
 
 export function getKanji(ch: string): Promise<Kanji> {
-  const url = getBackendURL();
   const c = prefixFilenameCase(ch);
 
-  return fetch(`${url}/svg/${c}.json`)
+  return fetch(addBasePath(`/svg/${c}.json`))
     .then(handleResponse)
     .then(CharacterSchema.parse)
     .then((svg) => {
