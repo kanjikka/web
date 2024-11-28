@@ -34,6 +34,10 @@ export function getKanji(ch: string): Promise<Kanji> {
           `SVG name: '${svg.name}' is different from character: '${ch}'`
         );
       }
+
+      svg.strokeOrderFilename = addBasePath(svg.strokeOrderFilename);
+      svg.templateFilename = addBasePath(svg.templateFilename);
+
       return {
         name: ch,
         svg,
