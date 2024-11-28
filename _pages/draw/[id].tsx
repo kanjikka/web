@@ -95,27 +95,34 @@ export async function getServerSideProps(context: any) {
     throw new Error("No character available.");
   }
 
+  console.log("all kanjis", kanjis);
+
   // TODO: do this concurrently?
-  let exampleSentences = await datastore.searchExampleSentence(
-    db,
-    chars.join("")
-  );
-
+  //  let exampleSentences = await datastore.searchExampleSentence(
+  //    db,
+  //    chars.join("")
+  //  );
+  //
   // If one of the sentences is itself, let's use its audio etc
-  const sentence = exampleSentences.find(
-    (a) => a.japaneseSentence === chars.join("")
-  );
-
-  // Filter itself from example sentences, since it's redundant
-  exampleSentences = exampleSentences.filter(
-    (a) => a.japaneseSentence !== chars.join("")
-  );
-
+  //  const sentence = exampleSentences.find(
+  //    (a) => a.japaneseSentence === chars.join("")
+  //  );
+  //
+  //  // Filter itself from example sentences, since it's redundant
+  //  exampleSentences = exampleSentences.filter(
+  //    (a) => a.japaneseSentence !== chars.join("")
+  //  );
+  //
+  //  console.log({
+  //    kanjis,
+  //    sentence,
+  //    exampleSentences,
+  //  });
   return {
     props: {
       // Stupid next fails if we pass undefined lol
-      sentence: sentence ? sentence : null,
-      exampleSentences,
+      //      sentence: sentence ? sentence : null,
+      //      exampleSentences,
       kanjis,
     },
   };
