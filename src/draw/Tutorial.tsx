@@ -19,16 +19,16 @@ export function Tutorial(props: { characters: Kanji[] }) {
               {k.name}
             </Link>
           </h2>
-          <TutorialTile key={k.name} characters={k} />
+          <TutorialTile key={k.name} character={k} />
         </div>
       ))}
     </>
   );
 }
 
-function TutorialTile(props: { characters: Kanji }) {
+function TutorialTile(props: { character: Kanji }) {
   const strokeCount = Math.floor(
-    props.characters.svg.width / props.characters.svg.individualWidth
+    props.character.svg.width / props.character.svg.individualWidth
   );
 
   return (
@@ -38,13 +38,13 @@ function TutorialTile(props: { characters: Kanji }) {
           <div
             key={i}
             style={{
-              backgroundImage: `url("/svg/${props.characters.name}.svg")`,
+              backgroundImage: `url("${props.character.svg.strokeOrderFilename}")`,
               backgroundPositionX: `-${
-                (i * props.characters.svg.width) / strokeCount
+                (i * props.character.svg.width) / strokeCount
               }px`,
 
-              width: props.characters.svg.width / strokeCount,
-              height: props.characters.svg.height,
+              width: props.character.svg.width / strokeCount,
+              height: props.character.svg.height,
             }}
           ></div>
         );

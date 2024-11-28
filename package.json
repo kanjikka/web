@@ -40,6 +40,7 @@
     "@types/react-keyboard-event-handler": "^1.5.0",
     "@types/svg-parser": "^2.0.2",
     "cheerio": "^1.0.0-rc.9",
+    "express": "^4.21.1",
     "fast-xml-parser": "^3.19.0",
     "fs-extra": "^10.0.0",
     "global-jsdom": "^8.1.0",

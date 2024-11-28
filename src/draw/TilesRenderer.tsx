@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import { TileStructure } from "./TilesEngine";
 import styles from "./Tiles.module.css";
 import { PracticeCanvasHandle } from "./PracticeCanvas";
+import { addBasePath } from "next/dist/client/add-base-path";
 
 const PracticeCanvas = dynamic(() => import("./PracticeCanvas"), {
   ssr: false,
@@ -89,8 +90,11 @@ function findOutStyles(assistEnabled: boolean, character?: string) {
 
 function tileImg(assistEnabled: boolean, c?: string) {
   if (!assistEnabled || !c) {
-    return "url(/kanji-template/template.svg)";
+    // TODO: unify this, maybe this url should come from the api
+    const url = addBasePath("/kanji-template/template.svg");
+    return `url(${url})`;
   }
 
-  return `url(/kanji-template/${c}.svg)`;
+  const url = addBasePath(`/kanji-template/${c}.svg`);
+  return `url(${url})`;
 }
