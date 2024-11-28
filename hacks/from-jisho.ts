@@ -24,7 +24,7 @@ import allKanji from "../public/all-kanji.json";
 
 // comes from
 // https://github.com/rouleaup88/Kanji-stroke-order
-import allSvg from "../All_svg.json";
+const allSvg = require("../All_svg.json");
 import { utf8 } from "@47ng/codec";
 
 const RESULTS_DIR = "results";
