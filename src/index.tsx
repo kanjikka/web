@@ -1,9 +1,6 @@
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
-import Link from "next/link";
 import Search from "./search/search";
-import { useEffect } from "react";
-import { useRouter } from "next/router";
 
 //function useSync() {
 //  useEffect(() => {

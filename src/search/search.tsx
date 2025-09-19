@@ -1,3 +1,4 @@
+"use client";
 import { getLink } from "@/svc/router";
 import { useRef } from "react";
 

@@ -1,8 +1,9 @@
+"use client";
+
 import DrawPage from "@/draw/[id]";
 import { Kanji } from "@/models/kanji.schema";
 import { getAllCharacters } from "@/svc/kanji";
-import { redirectToRoot } from "@/svc/router";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type States =
@@ -20,6 +21,7 @@ export default function Page() {
   const [state, setState] = useState<States>({
     name: "PRISTINE",
   });
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     async function load(query: string) {
@@ -46,8 +48,8 @@ export default function Page() {
       //      }
     }
 
-    if (router.isReady) {
-      const q = router.query.c;
+    if (searchParams) {
+      const q = searchParams.get("c");
 
       if (!q || Array.isArray(q)) {
         setState({
@@ -59,7 +61,7 @@ export default function Page() {
         load(q);
       }
     }
-  }, [router.isReady, router.query]);
+  }, [searchParams]);
 
   if (state.name !== "LOADED") {
     return null;
