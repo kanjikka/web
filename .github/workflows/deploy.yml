@@ -25,14 +25,16 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    # Since the lambda function runs on arm64
+    # We need to have our runner on arm64 as well
+    # So that it pulls the correct bindings for stuff like better-sqlite3
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Install asdf & tools
         uses: asdf-vm/actions/install@master
       - run: npm install
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
