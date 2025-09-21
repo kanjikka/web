@@ -1,6 +1,7 @@
 import { CharacterSchema, Kanji } from "../models/kanji.schema";
 import { prefixFilenameCase } from "./prefixFilename";
 import { addBasePath } from "next/dist/client/add-base-path";
+import { open, getCharacter } from "../../hacks/db";
 
 export async function getAllCharacters(
   wordOrPhrase: string
@@ -14,11 +15,18 @@ export async function getAllCharacters(
   // Only unique
   const uniq = [...new Set(chars)];
 
-  const p = await Promise.allSettled(uniq.map(getKanji));
+  const p = await Promise.allSettled(uniq.map(getKanji2));
   return {
     characters: p.filter((s) => s.status === "fulfilled").map((s) => s.value),
     fail: p.filter((s) => s.status === "rejected"),
   };
+}
+
+export async function getKanji2(ch: string): Promise<Kanji> {
+  const db = await open();
+  const character = getCharacter(db, ch);
+
+  return character;
 }
 
 export function getKanji(ch: string): Promise<Kanji> {

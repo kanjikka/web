@@ -6,6 +6,7 @@ import { Nextjs } from "cdk-nextjs-standalone";
 type Props = StackProps & {
   domainName: string;
   alternativeDomainNames: string[];
+  publicURL: string;
 };
 export class WebStack extends Stack {
   constructor(scope: Construct, id: string, props: Props) {
@@ -39,6 +40,9 @@ export class WebStack extends Stack {
         domainName: props.domainName,
         certificate: certificate,
         hostedZone: zone,
+      },
+      environment: {
+        NEXT_PUBLIC_BASE_URL: props.publicURL,
       },
     });
     new CfnOutput(this, "CloudFrontDistributionDomain", {
