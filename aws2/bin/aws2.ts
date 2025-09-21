@@ -20,13 +20,12 @@
 //});
 //
 import * as cdk from "aws-cdk-lib";
-import { NextjsStack } from "../lib/nextjs-stack";
+import { WebStack } from "../lib/webstack";
 const app = new cdk.App();
 
-new NextjsStack(app, "kanjikka", {
+new WebStack(app, "kanjikka-web", {
   env: {
     account: "840016551025",
     region: "eu-west-2",
   },
 });
-

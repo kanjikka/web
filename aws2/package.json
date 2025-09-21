@@ -23,6 +23,7 @@
     "aws-cdk-lib": "2.214.0",
     "cdk-fck-nat": "^1.6.16",
     "cdk-nextjs": "^0.4.11",
+    "cdk-nextjs-standalone": "^4.3.0",
     "constructs": "^10.0.0"
   }
 }

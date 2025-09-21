@@ -3,7 +3,7 @@
 import DrawPage from "@/draw/[id]";
 import { Kanji } from "@/models/kanji.schema";
 import { getAllCharacters } from "@/svc/kanji";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 type States =
@@ -17,12 +17,14 @@ type States =
     };
 
 export default function Page() {
-  const router = useRouter();
   const [state, setState] = useState<States>({
     name: "PRISTINE",
   });
-  const searchParams = useSearchParams();
 
+  return <h1>Hello world</h1>;
+
+  /*
+  const searchParams = useSearchParams();
   useEffect(() => {
     async function load(query: string) {
       const res = await getAllCharacters(query);
@@ -68,4 +70,5 @@ export default function Page() {
   }
 
   return <DrawPage characters={state.characters} query={state.query} />;
+   */
 }
