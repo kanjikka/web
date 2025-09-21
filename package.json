@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "test": "jest",
+    "postinstall": "npm rebuild better_sqlite3",
     "build": "next build; sh -c 'sleep 10 && mkdir -p ./.next/server/app'",
     "hack": "ts-node --project hacks/tsconfig.json",
     "hacks:from-jisho": "npm run hack -- hacks/from-jisho.ts",
