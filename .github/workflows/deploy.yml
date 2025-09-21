@@ -4,46 +4,50 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
+  pull_request:
+
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
-  pages: write
   id-token: write
+  contents: read
 
-# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
-# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+
+  # When building PRs, always cancel the in-progress
+# When building Main, don't cancel the in-progress
 concurrency:
-  group: "pages"
-  cancel-in-progress: false
+  group: ${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: ${{ !contains(github.ref, 'main')}}
+
 
 jobs:
   deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
+      - name: Install asdf & tools
+        uses: asdf-vm/actions/install@master
       - run: npm install
-      - run: npm run build
-      # Deploy if PR
-      - name: Setup Pages
-        uses: actions/configure-pages@v5
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          # Upload entire repository
-          path: 'out'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+
+      - run: cd aws && npm install
+      - run: npm run cdk deploy
+        if: github.event_name != 'pull_request'
+        working-directory: ./aws
+        env:
+          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+
+      - run: npm run cdk synth -- --quiet
+        if: github.event_name == 'pull_request'
+        working-directory: ./aws
+        env:
+          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}

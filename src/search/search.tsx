@@ -1,3 +1,4 @@
+"use client";
 import { getLink } from "@/svc/router";
 import { useRef } from "react";
 
@@ -18,8 +19,8 @@ function getFieldName() {
   return names[0];
 }
 export default function Search() {
-  const formRef = useRef();
-  const inputRef = useRef();
+  const formRef = useRef<any>();
+  const inputRef = useRef<any>();
 
   // TODO
   // use [Constraint validation API - Web APIs | MDN](https://developer.mozilla.org/en-US/docs/Web/API/Constraint_validation)
@@ -32,6 +33,9 @@ export default function Search() {
   });
 
   const fieldName = getFieldName();
+  if (!formRef || !inputRef) {
+    return null;
+  }
 
   return (
     <form
