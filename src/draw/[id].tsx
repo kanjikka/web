@@ -29,13 +29,9 @@ export default function Draw(props: DrawProps) {
         <Title chars={query.split("")} />
       </div>
       <div className={styles.reference}>
-        <details>
-          <summary>
-            <h4 style={{ display: "inline-block" }}>Tutorial:</h4>
-          </summary>
+        <h4 style={{ display: "inline-block" }}>Tutorial:</h4>
 
-          <Tutorial characters={characters} />
-        </details>
+        <Tutorial characters={characters} />
       </div>
     </div>
   );

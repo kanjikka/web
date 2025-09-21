@@ -23,9 +23,6 @@ import * as cdk from "aws-cdk-lib";
 import { WebStack } from "../lib/webstack";
 const app = new cdk.App();
 
-console.log("ACC", process.env.AWS_ACCOUNT);
-console.log("REGION", process.env.AWS_REGION);
-
 new WebStack(app, "kanjikka-web", {
   env: {
     account: process.env.AWS_ACCOUNT,
@@ -33,4 +30,5 @@ new WebStack(app, "kanjikka-web", {
   },
   domainName: "kanjikka.com",
   alternativeDomainNames: ["www.kanjikka.com"],
+  publicURL: "https://kanjikka.com",
 });

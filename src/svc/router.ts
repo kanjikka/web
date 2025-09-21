@@ -19,7 +19,8 @@ type RouteParams =
 
 export function getLink(route: RouteParams) {
   const link = getLinkPure(route);
-  return addBasePath(link);
+  return link;
+  //  return addBasePath(link);
 }
 
 export function getLinkPure(route: RouteParams) {
@@ -30,7 +31,7 @@ export function getLinkPure(route: RouteParams) {
     }
 
     case "SHOW": {
-      return `/show?c=${route.query}`;
+      return `/show/${route.query}`;
     }
   }
 }
