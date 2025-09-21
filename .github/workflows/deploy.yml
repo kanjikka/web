@@ -25,7 +25,7 @@ concurrency:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,7 +33,7 @@ jobs:
         uses: asdf-vm/actions/install@master
       - run: npm install
       - run: |
-          npx open-next build --node-externals aws-sdk,sharp,sqlite
+          npx open-next build --node-externals aws-sdk,sharp,better-sqlite3
           file .open-next/server-functions/default/node_modules/better-sqlite3/build/Release/better_sqlite3.node
 
 
