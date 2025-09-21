@@ -6,6 +6,12 @@ const config = {
       arch: "arm64",
       additionalArgs: "--shamefully-hoist --cpu=arm64 --os=linux --libc=glibc",
     },
+    copyFiles: [
+      {
+        from: "node_modules/better-sqlite3/build/Release/better_sqlite3.node",
+        to: "node_modules/better-sqlite3/build/Release/better_sqlite3.node",
+      },
+    ],
   },
 };
 
