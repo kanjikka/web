@@ -37,7 +37,6 @@ export class WebStack extends Stack {
 
     const nextjs = new Nextjs(this, "Nextjs", {
       nextjsPath: "../", // relative path from your project root to NextJS
-      //      architecture: lambda.Architecture.X86_64, // 👈 force x86_64
       overrides: {
         nextjsServer: {
           functionProps: {

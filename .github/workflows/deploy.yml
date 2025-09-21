@@ -25,6 +25,9 @@ concurrency:
 
 jobs:
   deploy:
+    # Since the lambda function runs on arm64
+    # We need to have our runner on arm64 as well
+    # So that it pulls the correct bindings for stuff like better-sqlite3
     runs-on: ubuntu-24.04-arm
     steps:
       - name: Checkout
@@ -32,11 +35,6 @@ jobs:
       - name: Install asdf & tools
         uses: asdf-vm/actions/install@master
       - run: npm install
-      - run: |
-          npx open-next build --node-externals aws-sdk,sharp,better-sqlite3
-          file .open-next/server-functions/default/node_modules/better-sqlite3/build/Release/better_sqlite3.node
-
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -45,13 +43,13 @@ jobs:
 
       - run: cd aws && npm install
       - run: npm run cdk deploy
-#        if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         working-directory: ./aws
         env:
           AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
 
-#      - run: npm run cdk synth -- --quiet
-#        if: github.event_name == 'pull_request'
-#        working-directory: ./aws
-#        env:
-#          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+      - run: npm run cdk synth -- --quiet
+        if: github.event_name == 'pull_request'
+        working-directory: ./aws
+        env:
+          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
