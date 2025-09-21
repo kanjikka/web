@@ -32,12 +32,11 @@ jobs:
       - name: Install asdf & tools
         uses: asdf-vm/actions/install@master
       - run: npm install
-      - run: npm run build
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-region: ${{ secrets.AWS_ACCOUNT }}
+          aws-region: ${{ secrets.AWS_REGION }}
           role-to-assume: ${{ secrets.AWS_ROLE }}
 
       - run: cd aws && npm install
