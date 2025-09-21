@@ -25,7 +25,7 @@ const app = new cdk.App();
 
 new WebStack(app, "kanjikka-web", {
   env: {
-    account: "840016551025",
-    region: "eu-west-2",
+    account: process.env.AWS_ACCOUNT,
+    region: process.env.AWS_REGION,
   },
 });

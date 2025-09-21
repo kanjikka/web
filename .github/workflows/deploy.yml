@@ -46,7 +46,7 @@ jobs:
         env:
           AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
 
-      - run: npm run cdk synth
+      - run: npm run cdk synth -- --quiet
         if: github.event_name == 'pull_request'
         working-directory: ./aws
         env:
