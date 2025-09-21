@@ -4,5 +4,9 @@
     "eu-west-2b",
     "eu-west-2c"
   ],
-  "ami:account=840016551025:filters.image-type.0=machine:filters.name.0=fck-nat-al2023-*-arm64-ebs:filters.state.0=available:owners.0=568608671756:region=eu-west-2": "ami-0d1def3d20c6e4d74"
+  "ami:account=840016551025:filters.image-type.0=machine:filters.name.0=fck-nat-al2023-*-arm64-ebs:filters.state.0=available:owners.0=568608671756:region=eu-west-2": "ami-0d1def3d20c6e4d74",
+  "hosted-zone:account=840016551025:domainName=kanjikka.com:region=eu-west-2": {
+    "Id": "/hostedzone/Z100854713IPHX20QGKO7",
+    "Name": "kanjikka.com."
+  }
 }
