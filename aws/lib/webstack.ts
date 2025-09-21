@@ -1,7 +1,8 @@
-import { App, CfnOutput, Stack, StackProps } from "aws-cdk-lib";
+import { CfnOutput, Stack, StackProps } from "aws-cdk-lib";
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import { Nextjs } from "cdk-nextjs-standalone";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 
 type Props = StackProps & {
   domainName: string;
@@ -36,6 +37,17 @@ export class WebStack extends Stack {
 
     const nextjs = new Nextjs(this, "Nextjs", {
       nextjsPath: "../", // relative path from your project root to NextJS
+      //      architecture: lambda.Architecture.X86_64, // 👈 force x86_64
+      overrides: {
+        nextjsServer: {
+          functionProps: {
+            // So that it uses the same as from asdf (.tool-versions)
+            runtime: lambda.Runtime.NODEJS_22_X,
+            // It uses ARM_64 by default, but just to make it crystal clear
+            architecture: lambda.Architecture.ARM_64,
+          },
+        },
+      },
       domainProps: {
         domainName: props.domainName,
         certificate: certificate,
