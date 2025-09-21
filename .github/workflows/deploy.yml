@@ -37,19 +37,19 @@ jobs:
           file .open-next/server-functions/default/node_modules/better-sqlite3/build/Release/better_sqlite3.node
 
 
-#      - name: Configure AWS Credentials
-#        uses: aws-actions/configure-aws-credentials@v4
-#        with:
-#          aws-region: ${{ secrets.AWS_REGION }}
-#          role-to-assume: ${{ secrets.AWS_ROLE }}
-#
-#      - run: cd aws && npm install
-#      - run: npm run cdk deploy
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_ROLE }}
+
+      - run: cd aws && npm install
+      - run: npm run cdk deploy
 #        if: github.event_name != 'pull_request'
-#        working-directory: ./aws
-#        env:
-#          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
-#
+        working-directory: ./aws
+        env:
+          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+
 #      - run: npm run cdk synth -- --quiet
 #        if: github.event_name == 'pull_request'
 #        working-directory: ./aws
