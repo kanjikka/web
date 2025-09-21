@@ -32,22 +32,26 @@ jobs:
       - name: Install asdf & tools
         uses: asdf-vm/actions/install@master
       - run: npm install
+      - run: |
+          npx open-next build --node-externals aws-sdk,sharp,sqlite
+          file .open-next/server-functions/default/node_modules/better-sqlite3/build/Release/better_sqlite3.node
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ secrets.AWS_REGION }}
-          role-to-assume: ${{ secrets.AWS_ROLE }}
 
-      - run: cd aws && npm install
-      - run: npm run cdk deploy
-        if: github.event_name != 'pull_request'
-        working-directory: ./aws
-        env:
-          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
-
-      - run: npm run cdk synth -- --quiet
-        if: github.event_name == 'pull_request'
-        working-directory: ./aws
-        env:
-          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+#      - name: Configure AWS Credentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          aws-region: ${{ secrets.AWS_REGION }}
+#          role-to-assume: ${{ secrets.AWS_ROLE }}
+#
+#      - run: cd aws && npm install
+#      - run: npm run cdk deploy
+#        if: github.event_name != 'pull_request'
+#        working-directory: ./aws
+#        env:
+#          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+#
+#      - run: npm run cdk synth -- --quiet
+#        if: github.event_name == 'pull_request'
+#        working-directory: ./aws
+#        env:
+#          AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
