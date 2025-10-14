@@ -1,0 +1,24 @@
+
+.hero {
+  height: 100dvh;
+  min-height: 500px;
+  position: relative;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 0 1rem;
+}
+
+.heroImage {
+  z-index: -1;
+}
+
+.heroTitle {
+  color: var(--text-alternate);
+  font-weight: 400;
+  font-size: 3rem;
+  text-align: center;
+}

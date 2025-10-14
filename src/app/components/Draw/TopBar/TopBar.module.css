@@ -1,0 +1,7 @@
+.topBar {
+  background: var(--accent-color);
+  height: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
