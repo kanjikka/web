@@ -5,7 +5,11 @@ import styles from "./Search.module.css";
 import MagnifyingClass from "./magnifying_glass.svg";
 import Image from "next/image";
 
-export default function Search() {
+type SearchProps = {
+  buttonColor?: "NORMAL" | "DARK";
+};
+
+export default function Search({ buttonColor = "NORMAL" }: SearchProps) {
   const router = useRouter();
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -24,18 +28,24 @@ export default function Search() {
   }
 
   return (
-    <form onSubmit={onSubmit} className={styles.form} data-testid="search-form">
-      <input
-        className={styles.input}
-        type="text"
-        required
-        data-testid="search-query-input"
-        name={"query"}
-        placeholder="Input kanji, radical or words"
-      />
-      <button className={styles.button}>
-        <Image src={MagnifyingClass} alt="Search" width="30" height="30" />
-      </button>
-    </form>
+    <div className={styles.form}>
+      <form onSubmit={onSubmit} data-testid="search-form">
+        <input
+          className={styles.input}
+          type="text"
+          required
+          data-testid="search-query-input"
+          name={"query"}
+          placeholder="Input kanji, radical or words"
+        />
+        <button
+          className={`${styles.button} ${
+            buttonColor === "DARK" && styles.darkButton
+          }`}
+        >
+          <Image src={MagnifyingClass} alt="Search" width="30" height="30" />
+        </button>
+      </form>
+    </div>
   );
 }

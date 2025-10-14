@@ -19,6 +19,7 @@ a {
   --text-main: #000;
   --text-alternate: #fff;
   --accent-color: #CE3B2B;
+  --dark-color: #000;
 
   --border-radius: 39px;
 }
@@ -27,4 +28,5 @@ a {
 .container {
   max-width: 1280px;
   margin: 0 auto;
+  padding: 0 1rem;
 }

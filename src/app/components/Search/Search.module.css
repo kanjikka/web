@@ -1,5 +1,7 @@
 .form {
   max-width: 1280px;
+  min-width: 500px;
+  height: 3rem;
   position: relative;
   --button-width: 80px;
 }
@@ -26,6 +28,10 @@
   border-radius:0 var(--border-radius) var(--border-radius) 0;
 
   cursor: pointer;
+}
+
+.darkButton {
+  background-color: var(--dark-color);
 }
 
 .button img {
