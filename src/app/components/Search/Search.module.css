@@ -1,6 +1,5 @@
 .form {
-  max-width: 800px;
-  margin: 0 auto;
+  max-width: 1280px;
   position: relative;
   --button-width: 80px;
 }
@@ -25,6 +24,8 @@
   height: 3rem;
   border: 0;
   border-radius:0 var(--border-radius) var(--border-radius) 0;
+
+  cursor: pointer;
 }
 
 .button img {
