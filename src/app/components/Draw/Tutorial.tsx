@@ -1,4 +1,4 @@
-import { Kanji } from "../models/kanji.schema";
+import { Kanji } from "@/models/kanji.schema";
 import Link from "next/link";
 import styles from "./Tutorial.module.css";
 import { getLink } from "@/svc/router";
