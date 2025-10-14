@@ -1,0 +1,14 @@
+.hero {
+  height: 100dvh;
+}
+
+.heroImage {
+  z-index: -1;
+}
+
+.heroTitle {
+  color: var(--text-alternate);
+  font-weight: 400;
+  font-size: 3rem;
+  text-align: center;
+}

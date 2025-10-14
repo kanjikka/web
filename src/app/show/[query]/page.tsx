@@ -1,4 +1,4 @@
-import DrawPage from "@/draw/[id]";
+import DrawPage from "@/app/components/Draw/[id]";
 import { getIdeograms } from "@/svc/ideogram";
 
 export default async function Page({

@@ -1,12 +1,11 @@
 "use client";
 
-import styles from "../../styles/draw.module.css";
-import React, { useEffect, useRef, useState } from "react";
-import { Kanji } from "../models/kanji.schema";
+import styles from "./draw.module.css";
+import { Kanji } from "@/models/kanji.schema";
 import Link from "next/link";
 import { Tutorial } from "./Tutorial";
 import { Title } from "./Title";
-import Search from "../search/search";
+import Search from "@/app/components/Search/search";
 import { getLink } from "@/svc/router";
 
 type DrawProps = {

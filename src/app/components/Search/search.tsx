@@ -1,27 +1,13 @@
 "use client";
 import { getLink } from "@/svc/router";
 import { useRouter } from "next/navigation";
-//
-//function getFieldName() {
-//  // Convoluted way to get the query param key
-//  // To be used in a field name
-//  // Since the page expects that in the query param
-//  const link = getLink({
-//    name: "SHOW",
-//    query: "",
-//  });
-//
-//  const u = new URLSearchParams(link.split("?")[1]);
-//  const names = Array.from(u.keys());
-//  if (names.length !== 1) {
-//    throw new Error("Expected a single query param");
-//  }
-//  return names[0];
-//}
-//
+import styles from "./Search.module.css";
+import MagnifyingClass from "./magnifying_glass.svg";
+import Image from "next/image";
 
 export default function Search() {
   const router = useRouter();
+
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -38,13 +24,18 @@ export default function Search() {
   }
 
   return (
-    <form onSubmit={onSubmit} data-testid="search-form">
+    <form onSubmit={onSubmit} className={styles.form} data-testid="search-form">
       <input
+        className={styles.input}
         type="text"
         required
         data-testid="search-query-input"
         name={"query"}
+        placeholder="Input kanji, radical or words"
       />
+      <button className={styles.button}>
+        <Image src={MagnifyingClass} alt="Search" width="30" height="30" />
+      </button>
     </form>
   );
 }
