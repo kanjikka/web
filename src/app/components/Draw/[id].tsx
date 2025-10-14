@@ -1,9 +1,6 @@
 import styles from "./draw.module.css";
 import { Kanji } from "@/models/kanji.schema";
-import Link from "next/link";
 import { Tutorial } from "./Tutorial";
-import { Title } from "./Title";
-import { getLink } from "@/svc/router";
 import { TopBar } from "@/app/components/Draw/TopBar/TopBar";
 import { Recoleta } from "@/app/fonts/Fonts";
 
@@ -27,13 +24,6 @@ export default function Draw(props: DrawProps) {
         </h2>
 
         <h3 className={styles.query}>{decodeURI(query)}</h3>
-
-        {/*
-
-        <div className={styles.title}>
-          <Title chars={query.split("")} />
-        </div>
-    */}
         <div className={styles.reference}>
           <Tutorial characters={characters} />
         </div>
