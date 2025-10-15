@@ -8,8 +8,8 @@ import styles from "./Hero.module.css";
 function Nav() {
   return (
     <nav className={styles.nav}>
-      <div className="container">
-        <Logo />
+      <div className={`container ${styles.height100}`}>
+        <Logo showText />
       </div>
     </nav>
   );

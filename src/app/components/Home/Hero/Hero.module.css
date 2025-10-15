@@ -25,11 +25,14 @@
 .nav {
   position: absolute;
   top: 0;
-  /* 1rem refers to the hero padding */
-  width: calc(100%);
-  padding: 1rem 0;
+  width: 100%;
+  height: var(--topbar-height);
 }
 
 .container {
   padding: 0 1rem;
+}
+
+.height100 {
+  height: 100%;
 }
