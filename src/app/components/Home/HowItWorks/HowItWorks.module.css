@@ -1,5 +1,5 @@
 .section {
-  padding: 5rem 0;
+  padding: var(--section-padding);
 }
 .wrapper {
   display: flex;

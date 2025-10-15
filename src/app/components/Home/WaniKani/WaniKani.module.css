@@ -1,0 +1,25 @@
+.section {
+  padding: var(--section-padding);
+
+  background-color: #F7E9FD;
+}
+
+.sectionTitle {
+  font-size: 3rem;
+}
+
+.text {
+  font-size: 1.125rem;
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5rem;
+}
+
+.textSection {
+  flex-basis: 600px;
+}

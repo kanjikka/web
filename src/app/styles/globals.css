@@ -7,8 +7,7 @@ body {
 }
 
 a {
-  color: inherit;
-/*  text-decoration: none; */
+  color: #FD6404;
 }
 
 * {
@@ -25,7 +24,8 @@ a {
 
   --topbar-height: 102px;
 
-  --container-width: 1280px
+  --container-width: 1280px;
+  --section-padding: 10rem 0;
 }
 
 

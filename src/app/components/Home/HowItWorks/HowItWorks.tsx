@@ -4,7 +4,6 @@ import Img2 from "./img2.svg";
 import Img3 from "./img3.svg";
 import styles from "./HowItWorks.module.css";
 import { Recoleta } from "@/app/fonts/Fonts";
-import Link from "next/link";
 
 const Items = [
   {
