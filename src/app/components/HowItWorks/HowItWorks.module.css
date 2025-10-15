@@ -1,0 +1,52 @@
+.section {
+  padding: 5rem 0;
+}
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5rem;
+  justify-content: center;
+}
+
+.wrapper > div {
+  flex-shrink: 300px;
+  flex-basis: 300px;
+  margin-top: 3rem;
+}
+
+.img1 {
+  background-color: hsla(104, 89%, 55%, 0.2);
+}
+
+.img2 {
+  background-color: hsla(53, 89%, 55%, 0.2);
+}
+
+.img3 {
+  background-color: hsla(187, 62%, 68%, 0.2);
+}
+
+.img1, .img2, .img3 {
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 3rem;
+}
+
+.sectionTitle {
+  font-size: 3rem;
+  text-align: center;
+}
+
+.title {
+  font-size: 2rem;
+}
+
+.text {
+  font-size: 1.125rem;
+}
+
+.itemWrapper {
+  text-align: center;
+}
