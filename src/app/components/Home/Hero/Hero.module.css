@@ -8,12 +8,11 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  padding: 0 1rem;
 }
 
 .heroImage {
   z-index: -1;
+  object-fit: cover;
 }
 
 .heroTitle {
@@ -21,4 +20,19 @@
   font-weight: 400;
   font-size: 3rem;
   text-align: center;
+}
+
+.nav {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: var(--topbar-height);
+}
+
+.container {
+  padding: 0 1rem;
+}
+
+.height100 {
+  height: 100%;
 }

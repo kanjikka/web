@@ -1,7 +1,29 @@
 .topBar {
   background: var(--accent-color);
-  height: 5rem;
+  height: var(--topbar-height);
+}
+
+.container {
+  height: 100%;
+}
+
+
+.wrapper {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100%;
 }
+
+.logo {
+  margin-right: auto;
+}
+
+.menu {
+  margin-left: auto;
+
+  /* TODO: add this back when reimplementing */
+  visibility: hidden;
+  opacity: 0;
+}
+
