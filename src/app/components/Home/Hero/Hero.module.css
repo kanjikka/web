@@ -8,8 +8,6 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  padding: 0 1rem;
 }
 
 .heroImage {
@@ -22,4 +20,16 @@
   font-weight: 400;
   font-size: 3rem;
   text-align: center;
+}
+
+.nav {
+  position: absolute;
+  top: 0;
+  /* 1rem refers to the hero padding */
+  width: calc(100%);
+  padding: 1rem 0;
+}
+
+.container {
+  padding: 0 1rem;
 }
