@@ -30,12 +30,12 @@
   cursor: pointer;
 }
 
-.darkButton {
-  background-color: var(--dark-color);
-}
-
-.button img {
+.button svg {
+  color: white;
   /* Manually center, since the rounded borders make it look off */
   margin-left: -10px;
 }
 
+.darkButton {
+  background-color: var(--dark-color);
+}
