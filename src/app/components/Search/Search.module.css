@@ -39,3 +39,9 @@
 .darkButton {
   background-color: var(--dark-color);
 }
+
+.buttonLoading {
+  width: 100%;
+  border-radius: var(--border-radius);
+  transition: width 0.3s ease-in;
+}

@@ -2,7 +2,7 @@
 import { getLink } from "@/svc/router";
 import { useRouter } from "next/navigation";
 import styles from "./Search.module.css";
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 type SearchProps = {
   buttonColor?: "NORMAL" | "DARK";
@@ -11,26 +11,34 @@ type SearchProps = {
 export default function Search({ buttonColor = "NORMAL" }: SearchProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (loading) {
+    if (loading || !buttonRef.current) {
       return;
     }
-    setLoading(true);
 
     const form = event.currentTarget;
     const formElements = form.elements as typeof form.elements & {
       query: HTMLInputElement;
     };
-
     const link = getLink({
       name: "SHOW",
       query: formElements.query.value,
     });
 
-    setLoading(false);
-    router.push(link);
+    function onAnimate() {
+      // Wait a little bit after the transition ends to move to the next
+      setTimeout(() => {
+        router.push(link);
+      }, 100);
+    }
+
+    buttonRef.current.removeEventListener("transitionend", onAnimate);
+    setLoading(true);
+
+    buttonRef.current.addEventListener("transitionend", onAnimate);
   }
 
   const Icon = loading ? <LoadingIcon /> : <MagnifyingGlassIcon />;
@@ -47,9 +55,10 @@ export default function Search({ buttonColor = "NORMAL" }: SearchProps) {
           placeholder="Input kanji, radical or words (in japanese)"
         />
         <button
+          ref={buttonRef}
           className={`${styles.button} ${
             buttonColor === "DARK" && styles.darkButton
-          }`}
+          } ${loading && styles.buttonLoading}`}
         >
           {Icon}
         </button>
