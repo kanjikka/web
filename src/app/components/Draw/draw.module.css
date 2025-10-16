@@ -1,11 +1,5 @@
-
-.container {
-  --main-columns: 7;
-
-  max-width: 90%;
-  margin: 0 auto;
-
-  padding-bottom: 80px;
+.main {
+  padding: var(--section-padding);
 }
 
 .title {
