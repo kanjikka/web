@@ -112,6 +112,21 @@ export function HowItWorks() {
           </p>
         </div>
 
+        <div className={styles.block}>
+          <h2 className={`${Recoleta.className} ${styles.heading2}`}>
+            What this website is not
+          </h2>
+          <p>
+            We are not a dictionary. We don't do any fancy stroke order
+            recognition (for that you should check{" "}
+            <Link href="https://www.kakimashou.com">Kakimashou!</Link>)
+          </p>
+
+          <p>
+            <b>We are a tool to easily lookup Kanji Stroke order</b>.
+          </p>
+        </div>
+
         <div className={styles.illustrationWrapper}>
           <Image
             src={WomanImg}
