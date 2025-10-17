@@ -1,17 +1,22 @@
-import Image from "next/image";
-import HamburgerMenuIcon from "./HamburgerMenu.svg";
+import styles from "./HamburgerMenu.module.css";
 
 type Props = {
   className?: string;
+  mode: "light" | "dark";
 };
-export function HamburgerMenu({ className = "" }: Props) {
+export function HamburgerMenu({ mode, className = "" }: Props) {
   return (
-    <Image
-      className={className}
-      src={HamburgerMenuIcon}
-      alt="Menu"
-      width="40"
-      height="40"
-    />
+    <svg
+      className={`${className} ${
+        mode === "light" ? styles.light : styles.dark
+      } ${styles.svg}`}
+      width="47"
+      height="47"
+      viewBox="0 0 47 47"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path d="M0 0H46.5V7.78367H0V0ZM0 19.4592H46.5V27.2429H0V19.4592ZM0 38.9184H46.5V46.702H0V38.9184Z" />
+    </svg>
   );
 }
