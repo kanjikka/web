@@ -15,10 +15,6 @@ export default function Draw(props: DrawProps) {
     <section>
       <TopBar />
       <main className={`container ${styles.main}`}>
-        {/* TODO: More strict logic to go back to the main page if there's nothing in history 
-        <Link href={getLink({ name: "HOME" })}>Go to home page</Link>
-          */}
-
         <h2 className={`${Recoleta.className} ${styles.title}`}>
           Stroke Order
         </h2>

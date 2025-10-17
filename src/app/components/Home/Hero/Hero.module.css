@@ -36,3 +36,13 @@
 .height100 {
   height: 100%;
 }
+
+.navContainer {
+  display: flex;
+}
+
+.randomWrapper {
+  text-align: center;
+  font-size: 1.25rem;
+  padding: 1rem 0;
+}

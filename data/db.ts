@@ -9,12 +9,6 @@ export async function open(filepath: string | undefined = undefined) {
   const db = sqlite3(filename, {
     readonly: true,
   });
-
-  //  const db = await sqlite.open({
-  //    filename,
-  //    driver: sqlite3.Database,
-  //  });
-
   return db;
 }
 
@@ -56,6 +50,17 @@ async function loadCharacterFromDB(db: sqlite3.Database, name: string) {
   const res = prepared.get(name) as any;
   return {
     name,
+    svg: SvgSchema.parse(JSON.parse(res.body)),
+  };
+}
+
+export async function getRandomIdeogram(db: sqlite3.Database) {
+  const prepared = db.prepare(
+    `select name, json(json) as body from SVG order by RANDOM() limit 1`
+  );
+  const res = prepared.get() as any;
+  return {
+    name: res.name,
     svg: SvgSchema.parse(JSON.parse(res.body)),
   };
 }
