@@ -1,0 +1,11 @@
+.dark {
+  fill: var(--dark-color);
+}
+.light {
+  fill: var(--light-color);
+}
+
+.svg {
+  width: 47px;
+  height: 47px;
+}

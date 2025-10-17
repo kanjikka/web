@@ -3,27 +3,69 @@
   height: var(--topbar-height);
 }
 
+.topBarTransparent {
+  background: transparent;
+}
+
 .container {
   height: 100%;
+  padding: 0 1rem;
 }
 
 
 .wrapper {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: 100%;
-}
-
-.logo {
-  margin-right: auto;
+  gap: 2rem;
 }
 
 .menu {
   margin-left: auto;
-
-  /* TODO: add this back when reimplementing */
-  visibility: hidden;
-  opacity: 0;
+  z-index: 10;
+  position: relative;
 }
 
+
+
+.sidebar {
+  opacity: 0;
+  visibility: hidden;
+  position: fixed;
+  background: rgba(0,0,0,.5);
+  inset: 0;
+}
+
+.sidebarOpen {
+  opacity: 1;
+  visibility: visible;
+  z-index: 9;
+}
+
+.aside {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 300px;
+
+  background: var(--light-color);
+  padding-top: var(--topbar-height);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.item {
+  font-size: 1.5rem;
+  padding: 1rem 0;
+  padding-left: 1rem;
+}
+
+.search {
+  flex: 1;
+}

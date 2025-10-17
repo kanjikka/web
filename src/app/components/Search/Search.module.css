@@ -1,6 +1,5 @@
 .form {
   max-width: 1280px;
-  min-width: 500px;
   height: 3rem;
   position: relative;
   --button-width: 80px;

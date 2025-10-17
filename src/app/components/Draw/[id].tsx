@@ -13,7 +13,7 @@ export default function Draw(props: DrawProps) {
 
   return (
     <section>
-      <TopBar />
+      <TopBar mode="colored" />
       <main className={`container ${styles.main}`}>
         <h2 className={`${Recoleta.className} ${styles.title}`}>
           Stroke Order

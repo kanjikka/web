@@ -2,22 +2,13 @@ import Search from "@/app/components/Search/search";
 import HeroImage from "./Hero.jpg";
 import Image from "next/image";
 import { Recoleta } from "@/app/fonts/Fonts";
-import { Logo } from "@/app/components/Logo/Logo";
 import styles from "./Hero.module.css";
+import { TopBar } from "@/app/components/Draw/TopBar/TopBar";
 
-function Nav() {
-  return (
-    <nav className={styles.nav}>
-      <div className={`container ${styles.height100} ${styles.navContainer}`}>
-        <Logo showText />
-      </div>
-    </nav>
-  );
-}
 export function Hero() {
   return (
     <div className={styles.hero}>
-      <Nav />
+      <TopBar mode="transparent" className={styles.nav} hideSearchbar />
       <Image src={HeroImage} alt="" fill className={styles.heroImage} />
 
       <div className={`${styles.container} container`}>

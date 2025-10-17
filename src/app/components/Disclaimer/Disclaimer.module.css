@@ -1,0 +1,27 @@
+
+.main {
+  padding: var(--section-padding);
+  line-height: 1.5rem;
+}
+
+.title {
+  font-size: 3rem;
+  text-align: center;
+}
+
+.heading2 {
+  font-size: 2rem;
+}
+.heading3 {
+  font-size: 1.5rem;
+}
+
+
+.block {
+  padding: 1rem 0;
+}
+
+.illustrationWrapper {
+  display: flex;
+  justify-content: end;
+}

@@ -6,9 +6,13 @@ import { useRef, useState } from "react";
 
 type SearchProps = {
   buttonColor?: "NORMAL" | "DARK";
+  className?: string;
 };
 
-export default function Search({ buttonColor = "NORMAL" }: SearchProps) {
+export default function Search({
+  buttonColor = "NORMAL",
+  className,
+}: SearchProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -44,7 +48,7 @@ export default function Search({ buttonColor = "NORMAL" }: SearchProps) {
   const Icon = loading ? <LoadingIcon /> : <MagnifyingGlassIcon />;
 
   return (
-    <div className={styles.form}>
+    <div className={`${styles.form} ${className}`}>
       <form onSubmit={onSubmit} data-testid="search-form">
         <input
           className={styles.input}
