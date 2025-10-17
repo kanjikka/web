@@ -4,7 +4,6 @@ import Image from "next/image";
 import { Recoleta } from "@/app/fonts/Fonts";
 import { Logo } from "@/app/components/Logo/Logo";
 import styles from "./Hero.module.css";
-import Link from "next/link";
 
 function Nav() {
   return (

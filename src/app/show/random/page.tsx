@@ -6,3 +6,7 @@ export default async function Page() {
 
   return <DrawPage characters={[ideogram]} query={ideogram.name} />;
 }
+
+// Opt out from static site generation
+// Since we want to generate a different page every time
+export const dynamic = "force-dynamic";
