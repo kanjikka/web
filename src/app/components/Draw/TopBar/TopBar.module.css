@@ -3,6 +3,10 @@
   height: var(--topbar-height);
 }
 
+.topBarTransparent {
+  background: transparent;
+}
+
 .container {
   height: 100%;
   padding: 0 1rem;
@@ -19,7 +23,7 @@
 
 .menu {
   margin-left: auto;
-  z-index: 3;
+  z-index: 10;
   position: relative;
 }
 
@@ -36,6 +40,7 @@
 .sidebarOpen {
   opacity: 1;
   visibility: visible;
+  z-index: 9;
 }
 
 .aside {

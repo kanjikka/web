@@ -89,21 +89,19 @@ export function HowItWorks() {
           <h2 className={`${Recoleta.className} ${styles.heading2}`}>
             Why should I use this website?
           </h2>
-          <p>
-            There are other websites that have similar functionality:
-            <ul>
-              <li>
-                <Link href="https://kanji.sljfaq.org/kanjivg.html">
-                  https://kanji.sljfaq.org/kanjivg.html
-                </Link>
-              </li>
-              <li>
-                <Link href="https://kanji.sljfaq.org/kanjivg.html">
-                  https://www.kakimashou.com/dictionary/word/%E6%97%A5%E6%9C%AC
-                </Link>
-              </li>
-            </ul>
-          </p>
+          <p>There are other websites that have similar functionality:</p>
+          <ul>
+            <li>
+              <Link href="https://kanji.sljfaq.org/kanjivg.html">
+                https://kanji.sljfaq.org/kanjivg.html
+              </Link>
+            </li>
+            <li>
+              <Link href="https://kanji.sljfaq.org/kanjivg.html">
+                https://www.kakimashou.com/dictionary/word/%E6%97%A5%E6%9C%AC
+              </Link>
+            </li>
+          </ul>
           <p>
             <span className={Recoleta.className}>
               <b>Kanjikka</b>
