@@ -1,7 +1,7 @@
 import Image from "next/image";
-import Img1 from "./img1.svg";
-import Img2 from "./img2.svg";
-import Img3 from "./img3.svg";
+import Img1 from "./img1.jpg";
+import Img2 from "./img2.jpg";
+import Img3 from "./img3.jpg";
 import styles from "./HowItWorks.module.css";
 import { Recoleta } from "@/app/fonts/Fonts";
 
@@ -46,7 +46,7 @@ export function HowItWorks() {
           return (
             <div key={i.title} className={styles.itemWrapper}>
               <div className={i.imgWrapperClassname}>
-                <Image src={i.img} width="105" height="205" alt={i.title} />
+                <Image src={i.img} fill alt={i.title} />
               </div>
 
               <h3 className={`${Recoleta.className} ${styles.title}`}>

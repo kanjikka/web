@@ -4,34 +4,27 @@
 .wrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 5rem;
+  gap: 9rem;
   justify-content: center;
 }
 
 .wrapper > div {
-  flex-shrink: 300px;
-  flex-basis: 300px;
+  flex-basis: 330px;
   margin-top: 3rem;
 }
-
-.img1 {
-  background-color: hsla(104, 89%, 55%, 0.2);
-}
-
-.img2 {
-  background-color: hsla(53, 89%, 55%, 0.2);
-}
-
-.img3 {
-  background-color: hsla(187, 62%, 68%, 0.2);
-}
-
 .img1, .img2, .img3 {
-  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 3rem;
+  position: relative;
+  min-height: 20rem;
+}
+
+.img1 img, .img2 img, .img3 img {
+  object-fit: cover;
+  box-shadow: 9px 7px 15px -6px #000000;
+  border-radius: 39px;
 }
 
 .sectionTitle {
