@@ -10,3 +10,4 @@ export default async function Page() {
 // Opt out from static site generation
 // Since we want to generate a different page every time
 export const dynamic = "force-dynamic";
+export const revalidate = 0;
