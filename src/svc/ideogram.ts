@@ -24,7 +24,11 @@ function handleResponse(response: Response) {
 export async function getIdeograms(
   query: string
 ): Promise<{ characters: Kanji[]; fail: any }> {
-  return fetch(`${getBaseURL()}/api/ideograms/${query}`)
-    .then(handleResponse)
-    .then();
+  return fetch(`${getBaseURL()}/api/ideograms/${query}`).then(handleResponse);
+}
+
+export async function getRandomIdeogram(): Promise<Kanji> {
+  return fetch(`${getBaseURL()}/api/ideograms/random`, {
+    cache: "no-cache",
+  }).then(handleResponse);
 }
